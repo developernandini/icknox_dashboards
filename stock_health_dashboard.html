@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICKNOX — Stock Health Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg:#f0f2f5; --surface:#ffffff; --border:#e2e5ea; --border2:#c8ccd6;
+    --text:#0f1117; --text2:#455068; --text3:#8f97ab;
+    --fresh:#16a34a; --ageing:#ca8a04; --slow:#ea580c; --critical:#dc2626;
+    --fresh-bg:#f0fdf4; --ageing-bg:#fefce8; --slow-bg:#fff7ed; --critical-bg:#fef2f2;
+    --fresh-border:#86efac; --ageing-border:#fde047; --slow-border:#fdba74; --critical-border:#fca5a5;
+    --accent:#1d4ed8; --accent-bg:#eff6ff; --accent-border:#bfdbfe;
+    --panel-w:480px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+  /* HEADER */
+  .header{background:#0f1117;padding:0 40px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+  .header-left{display:flex;align-items:center;gap:16px;}
+  .logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#fff;letter-spacing:0.5px;}
+  .hdivider{width:1px;height:18px;background:rgba(255,255,255,0.15);}
+  .header-sub{font-size:12px;color:rgba(255,255,255,0.4);}
+  .header-right{display:flex;align-items:center;gap:16px;}
+  .live-pill{display:flex;align-items:center;gap:6px;background:rgba(22,163,74,0.15);border:1px solid rgba(22,163,74,0.3);border-radius:20px;padding:3px 11px;font-size:10px;font-weight:600;color:#4ade80;letter-spacing:0.8px;text-transform:uppercase;}
+  .live-dot{width:5px;height:5px;border-radius:50%;background:#4ade80;animation:blink 2s infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+  .hdate{font-size:11px;color:rgba(255,255,255,0.3);}
+  .click-hint{font-size:10px;color:rgba(255,255,255,0.35);}
+
+  /* LAYOUT */
+  .main{padding:28px 40px 40px;max-width:1560px;margin:0 auto;}
+  .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;margin-top:28px;}
+  .section-head:first-child{margin-top:0;}
+  .section-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);white-space:nowrap;}
+  .section-rule{flex:1;height:1px;background:var(--border);}
+
+  /* KPI CARDS */
+  .kpi-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 16px 16px;position:relative;overflow:hidden;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s,transform 0.15s;user-select:none;}
+  .kpi:hover{border-color:var(--border2);box-shadow:0 2px 12px rgba(0,0,0,0.07);transform:translateY(-1px);}
+  .kpi.no-click{cursor:default;}
+  .kpi.no-click:hover{transform:none;box-shadow:none;border-color:var(--border);}
+  .kpi-stripe{position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0;}
+  .kpi-stripe.blue{background:var(--accent);} .kpi-stripe.fresh{background:var(--fresh);}
+  .kpi-stripe.ageing{background:var(--ageing);} .kpi-stripe.critical{background:var(--critical);}
+  .kpi-stripe.neutral{background:var(--border2);}
+  .kpi-label{font-size:10px;font-weight:600;letter-spacing:0.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+  .kpi-value{font-family:'Syne',sans-serif;font-size:38px;font-weight:700;line-height:1;color:var(--text);margin-bottom:5px;}
+  .kpi-value.blue{color:var(--accent);} .kpi-value.fresh{color:var(--fresh);}
+  .kpi-value.ageing{color:var(--ageing);} .kpi-value.critical{color:var(--critical);}
+  .kpi-sub{font-size:11px;color:var(--text3);}
+  .kpi-tip{position:absolute;bottom:8px;right:10px;font-size:9px;color:var(--text3);opacity:0;transition:opacity 0.15s;}
+  .kpi:hover .kpi-tip{opacity:1;}
+
+  /* CARDS */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;}
+  .card-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px;}
+  .card-sub{font-size:11px;color:var(--text3);margin-bottom:18px;}
+  .chart-wrap{position:relative;}
+
+  /* GRIDS */
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .grid-2-1{display:grid;grid-template-columns:1.6fr 1fr;gap:12px;}
+
+  /* TIER PILLS */
+  .tier-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .tier-pill{border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;border:1px solid;cursor:pointer;transition:box-shadow 0.15s,transform 0.15s;user-select:none;}
+  .tier-pill:hover{box-shadow:0 2px 10px rgba(0,0,0,0.08);transform:translateY(-1px);}
+  .tier-pill.fresh{background:var(--fresh-bg);border-color:var(--fresh-border);}
+  .tier-pill.ageing{background:var(--ageing-bg);border-color:var(--ageing-border);}
+  .tier-pill.slow{background:var(--slow-bg);border-color:var(--slow-border);}
+  .tier-pill.critical{background:var(--critical-bg);border-color:var(--critical-border);}
+  .tier-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+  .fresh .tier-name{color:var(--fresh);} .ageing .tier-name{color:var(--ageing);}
+  .slow  .tier-name{color:var(--slow);} .critical .tier-name{color:var(--critical);}
+  .tier-days{font-size:10px;color:var(--text3);margin-top:1px;}
+  .tier-count{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;line-height:1;text-align:right;}
+  .fresh .tier-count{color:var(--fresh);} .ageing .tier-count{color:var(--ageing);}
+  .slow  .tier-count{color:var(--slow);} .critical .tier-count{color:var(--critical);}
+  .tier-pct{font-size:10px;color:var(--text3);text-align:right;}
+
+  /* PREP BARS */
+  .prep-clickable{cursor:pointer;border-radius:6px;padding:4px 6px;margin:-4px -6px;transition:background 0.15s;}
+  .prep-clickable:hover{background:var(--bg);}
+  .prep-head{display:flex;justify-content:space-between;margin-bottom:5px;}
+  .prep-name{font-size:12px;font-weight:500;color:var(--text2);}
+  .prep-num{font-size:12px;color:var(--text3);}
+  .bar-bg{height:7px;background:var(--bg);border-radius:4px;overflow:hidden;border:1px solid var(--border);}
+  .bar-fill{height:100%;border-radius:4px;}
+
+  /* ADV BOXES */
+  .adv-boxes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+  .adv-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s;user-select:none;}
+  .adv-box:hover{border-color:var(--border2);box-shadow:0 2px 10px rgba(0,0,0,0.07);}
+  .adv-box-label{font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);margin-bottom:5px;}
+  .adv-box-val{font-family:'Syne',sans-serif;font-size:30px;font-weight:700;line-height:1;}
+  .adv-box-val.blue{color:var(--accent);} .adv-box-val.ageing{color:var(--ageing);}
+  .adv-box-sub{font-size:10px;color:var(--text3);margin-top:4px;}
+
+  /* CRITICAL TABLE */
+  .alert-banner{background:var(--critical-bg);border:1px solid var(--critical-border);border-radius:8px;padding:10px 16px;display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .alert-text{font-size:12px;font-weight:600;color:var(--critical);}
+  .alert-sub{font-size:11px;color:var(--text3);margin-left:auto;}
+  table{width:100%;border-collapse:collapse;font-size:12px;}
+  thead th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text3);border-bottom:2px solid var(--border);background:var(--bg);}
+  tbody td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text2);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover td{background:var(--bg);}
+  .reg-tag{font-family:'Inter',monospace;font-size:11px;font-weight:600;background:var(--bg);border:1px solid var(--border2);border-radius:4px;padding:3px 8px;color:var(--text);white-space:nowrap;letter-spacing:0.3px;}
+  .age-tag{font-size:12px;font-weight:700;padding:3px 9px;border-radius:5px;display:inline-block;}
+  .age-tag.critical{background:var(--critical-bg);color:var(--critical);border:1px solid var(--critical-border);}
+  .sdot{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;}
+  .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .dot.ready{background:var(--fresh);} .dot.repair{background:var(--critical);}
+  .dot.adv{background:var(--accent);}  .dot.unadv{background:var(--text3);}
+  .critical-flag{font-size:11px;font-weight:700;color:var(--critical);display:flex;align-items:center;gap:5px;}
+
+  /* SLIDE PANEL */
+  .overlay{position:fixed;inset:0;background:rgba(15,17,23,0.4);backdrop-filter:blur(2px);z-index:100;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+  .overlay.open{opacity:1;pointer-events:all;}
+  .panel{position:fixed;top:0;right:0;bottom:0;width:var(--panel-w);background:var(--surface);border-left:1px solid var(--border);z-index:101;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);box-shadow:-8px 0 40px rgba(0,0,0,0.12);}
+  .panel.open{transform:translateX(0);}
+  .panel-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;}
+  .panel-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;}
+  .panel-sub{font-size:11px;color:var(--text3);}
+  .panel-close{width:28px;height:28px;border-radius:6px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text2);flex-shrink:0;transition:background 0.15s;}
+  .panel-close:hover{background:var(--border);}
+  .panel-body{flex:1;overflow-y:auto;padding:16px 20px;}
+  .panel-count{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;}
+  .vcard{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px;}
+  .vcard-top{display:flex;align-items:center;justify-content:space-between;}
+  .vcard-reg{font-family:'Inter',monospace;font-size:12px;font-weight:700;color:var(--text);background:var(--surface);border:1px solid var(--border2);border-radius:4px;padding:2px 8px;letter-spacing:0.3px;}
+  .vcard-age{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
+  .vcard-age.fresh{color:var(--fresh);} .vcard-age.ageing{color:var(--ageing);}
+  .vcard-age.slow{color:var(--slow);}   .vcard-age.critical{color:var(--critical);}
+  .vcard-mid{font-size:13px;font-weight:600;color:var(--text);}
+  .vcard-bottom{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .vtag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:0.4px;}
+  .vtag.adv{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border);}
+  .vtag.unadv{background:var(--bg);color:var(--text3);border:1px solid var(--border2);}
+  .vtag.ready{background:var(--fresh-bg);color:var(--fresh);border:1px solid var(--fresh-border);}
+  .vtag.repair{background:var(--critical-bg);color:var(--critical);border:1px solid var(--critical-border);}
+  .vtag.fresh{background:var(--fresh-bg);color:var(--fresh);border:1px solid var(--fresh-border);}
+  .vtag.ageing{background:var(--ageing-bg);color:var(--ageing);border:1px solid var(--ageing-border);}
+  .vtag.slow{background:var(--slow-bg);color:var(--slow);border:1px solid var(--slow-border);}
+  .vtag.critical{background:var(--critical-bg);color:var(--critical);border:1px solid var(--critical-border);}
+  .panel-empty{text-align:center;color:var(--text3);padding:40px 20px;font-size:13px;}
+
+  /* FOOTER */
+
+  @media(max-width:1200px){
+    .kpi-grid{grid-template-columns:repeat(4,1fr);}
+    .grid-3{grid-template-columns:1fr 1fr;}
+    .grid-2-1{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo">ICKNOX</div>
+    <div class="hdivider"></div>
+    <div class="header-sub">Stock Health Report</div>
+  </div>
+  <div class="header-right">
+    <div class="hdate">07 March 2026</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="section-head">
+    <div class="section-label">Summary</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi" onclick="drillDown('all','All Live Stock','All 39 active vehicles')">
+      <div class="kpi-stripe blue"></div>
+      <div class="kpi-label">Total Live Stock</div>
+      <div class="kpi-value blue">39</div>
+      <div class="kpi-sub">Active vehicles</div>
+      <div class="kpi-tip">Click to view all &rarr;</div>
+    </div>
+    <div class="kpi" onclick="drillDown('adv','Advertised Stock','25 vehicles currently advertised')">
+      <div class="kpi-stripe blue"></div>
+      <div class="kpi-label">Advertised</div>
+      <div class="kpi-value blue">25</div>
+      <div class="kpi-sub">64.1% of live stock</div>
+      <div class="kpi-tip">Click to view &rarr;</div>
+    </div>
+    <div class="kpi" onclick="drillDown('unadv','UnAdvertised Stock','14 vehicles not yet advertised')">
+      <div class="kpi-stripe neutral"></div>
+      <div class="kpi-label">UnAdvertised</div>
+      <div class="kpi-value">14</div>
+      <div class="kpi-sub">35.9% of live stock</div>
+      <div class="kpi-tip">Click to view &rarr;</div>
+    </div>
+    <div class="kpi no-click">
+      <div class="kpi-stripe neutral"></div>
+      <div class="kpi-label">Avg Age</div>
+      <div class="kpi-value">55<span style="font-size:16px;color:var(--text3);font-weight:400"> days</span></div>
+      <div class="kpi-sub">Across live stock</div>
+    </div>
+    <div class="kpi" onclick="drillDown('over60','Over 60 Days','11 vehicles aged more than 60 days')">
+      <div class="kpi-stripe ageing"></div>
+      <div class="kpi-label">Over 60 Days</div>
+      <div class="kpi-value ageing">11</div>
+      <div class="kpi-sub">28.2% of live stock</div>
+      <div class="kpi-tip">Click to view &rarr;</div>
+    </div>
+    <div class="kpi" onclick="drillDown('critical','Critical Stock','7 vehicles aged more than 90 days')">
+      <div class="kpi-stripe critical"></div>
+      <div class="kpi-label">Over 90 Days</div>
+      <div class="kpi-value critical">7</div>
+      <div class="kpi-sub">17.9% of live stock</div>
+      <div class="kpi-tip">Click to view &rarr;</div>
+    </div>
+    <div class="kpi" onclick="drillDown('ready','Ready Vehicles','25 vehicles fully prepared and ready to sell')">
+      <div class="kpi-stripe fresh"></div>
+      <div class="kpi-label">Ready</div>
+      <div class="kpi-value fresh">64<span style="font-size:16px;font-weight:400;color:var(--text3)">%</span></div>
+      <div class="kpi-sub">25 Ready &middot; 14 Need Repair</div>
+      <div class="kpi-tip">Click to view &rarr;</div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-label">Stock Age Analysis</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">Age Distribution</div>
+      <div class="chart-wrap" style="height:210px;"><canvas id="ageChart"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Stock Tier Breakdown</div>
+      <div class="tier-grid">
+        <div class="tier-pill fresh" onclick="drillDown('fresh','Fresh Stock','Vehicles aged 0–30 days')">
+          <div><div class="tier-name">Fresh</div><div class="tier-days">0 – 30 days</div></div>
+          <div><div class="tier-count">17</div><div class="tier-pct">43.6%</div></div>
+        </div>
+        <div class="tier-pill ageing" onclick="drillDown('ageing','Ageing Stock','Vehicles aged 31–60 days')">
+          <div><div class="tier-name">Ageing</div><div class="tier-days">31 – 60 days</div></div>
+          <div><div class="tier-count">11</div><div class="tier-pct">28.2%</div></div>
+        </div>
+        <div class="tier-pill slow" onclick="drillDown('slow','Slow Stock','Vehicles aged 61–90 days')">
+          <div><div class="tier-name">Slow</div><div class="tier-days">61 – 90 days</div></div>
+          <div><div class="tier-count">4</div><div class="tier-pct">10.3%</div></div>
+        </div>
+        <div class="tier-pill critical" onclick="drillDown('critical','Critical Stock','Vehicles aged over 90 days')">
+          <div><div class="tier-name">Critical</div><div class="tier-days">90+ days</div></div>
+          <div><div class="tier-count">7</div><div class="tier-pct">17.9%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Preparation Status</div>
+      <div style="margin-bottom:14px;">
+        <div class="prep-clickable" onclick="drillDown('ready','Ready Vehicles','25 vehicles fully prepared')">
+          <div class="prep-head">
+            <span class="prep-name">Ready</span>
+            <span class="prep-num">25 of 39 &nbsp;&middot;&nbsp; 64%</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:64.1%;background:var(--fresh);"></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="prep-clickable" onclick="drillDown('repair','Need Repair Vehicles','14 vehicles awaiting repair')">
+          <div class="prep-head">
+            <span class="prep-name">Need Repair</span>
+            <span class="prep-num">14 of 39 &nbsp;&middot;&nbsp; 36%</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:35.9%;background:var(--critical);"></div></div>
+        </div>
+      </div>
+      <div style="margin-top:22px;">
+        <div class="chart-wrap" style="height:135px;"><canvas id="prepChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:16px;">
+    <div class="section-label">Listing Status &amp; Make</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="card-title">Advertised vs UnAdvertised</div>
+      <div class="adv-boxes">
+        <div class="adv-box" onclick="drillDown('adv','Advertised Stock','25 vehicles currently advertised')">
+          <div class="adv-box-label">Advertised</div>
+          <div class="adv-box-val blue">25</div>
+          <div class="adv-box-sub">Avg age: 63.6 days</div>
+        </div>
+        <div class="adv-box" onclick="drillDown('unadv','UnAdvertised Stock','14 vehicles not yet advertised')">
+          <div class="adv-box-label">UnAdvertised</div>
+          <div class="adv-box-val ageing">14</div>
+          <div class="adv-box-sub">Avg age: 41.1 days</div>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:170px;"><canvas id="advChart"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Make Distribution</div>
+      <div class="chart-wrap" style="height:240px;"><canvas id="makeChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:16px;">
+    <div class="section-label">Critical Stock — Action Required</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="card">
+    <div class="alert-banner">
+      <span style="font-size:15px;">&#9888;</span>
+      <span class="alert-text">7 vehicles in stock for over 90 days</span>
+      <span class="alert-sub">Sorted longest first — immediate action required</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Registration</th><th>Make</th><th>Model</th>
+          <th>Days in Stock</th><th>Listing</th><th>Prep Status</th><th>Tier</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="reg-tag">RX72YSD</span></td>
+          <td style="font-weight:500;color:var(--text);">Porsche</td>
+          <td>Turbo</td>
+          <td><span class="age-tag critical">339 days</span></td>
+          <td><span class="sdot"><span class="dot adv"></span>Advertised</span></td>
+          <td><span class="sdot"><span class="dot ready"></span>Ready</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+        <tr>
+          <td><span class="reg-tag">KF56 UBC</span></td>
+          <td style="font-weight:500;color:var(--text);">Ford</td>
+          <td>Galaxy</td>
+          <td><span class="age-tag critical">179 days</span></td>
+          <td><span class="sdot"><span class="dot unadv"></span>UnAdvertised</span></td>
+          <td><span class="sdot"><span class="dot ready"></span>Ready</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+        <tr>
+          <td><span class="reg-tag">AF72 TJZ</span></td>
+          <td style="font-weight:500;color:var(--text);">Tesla</td>
+          <td>Y Long Range</td>
+          <td><span class="age-tag critical">115 days</span></td>
+          <td><span class="sdot"><span class="dot adv"></span>Advertised</span></td>
+          <td><span class="sdot"><span class="dot ready"></span>Ready</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+        <tr>
+          <td><span class="reg-tag">BP74 JNN</span></td>
+          <td style="font-weight:500;color:var(--text);">Tesla</td>
+          <td>Y Long Range</td>
+          <td><span class="age-tag critical">110 days</span></td>
+          <td><span class="sdot"><span class="dot adv"></span>Advertised</span></td>
+          <td><span class="sdot"><span class="dot ready"></span>Ready</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+        <tr>
+          <td><span class="reg-tag">BN73 UEH</span></td>
+          <td style="font-weight:500;color:var(--text);">Volvo</td>
+          <td>Xc40</td>
+          <td><span class="age-tag critical">109 days</span></td>
+          <td><span class="sdot"><span class="dot unadv"></span>UnAdvertised</span></td>
+          <td><span class="sdot"><span class="dot repair"></span>Need Repair</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+        <tr>
+          <td><span class="reg-tag">BL74 EZU</span></td>
+          <td style="font-weight:500;color:var(--text);">Tesla</td>
+          <td>Y Long Range</td>
+          <td><span class="age-tag critical">99 days</span></td>
+          <td><span class="sdot"><span class="dot adv"></span>Advertised</span></td>
+          <td><span class="sdot"><span class="dot ready"></span>Ready</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+        <tr>
+          <td><span class="reg-tag">LB72 MHA</span></td>
+          <td style="font-weight:500;color:var(--text);">Tesla</td>
+          <td>Y Long Range</td>
+          <td><span class="age-tag critical">95 days</span></td>
+          <td><span class="sdot"><span class="dot adv"></span>Advertised</span></td>
+          <td><span class="sdot"><span class="dot ready"></span>Ready</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+
+<!-- SLIDE PANEL -->
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="panel" id="panel">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title" id="panelTitle"></div>
+      <div class="panel-sub"   id="panelSub"></div>
+    </div>
+    <div class="panel-close" onclick="closePanel()">&#10005;</div>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</div>
+
+<script>
+// ── ALL VEHICLE DATA (injected from Excel) ──
+const STOCK = [{"reg": "RX72YSD", "make": "Porsche", "model": "Turbo", "adv": "Advertised", "prep": "READY", "age": 339, "tier": "critical"}, {"reg": "AF72 TJZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 115, "tier": "critical"}, {"reg": "BP74 JNN", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 110, "tier": "critical"}, {"reg": "BN73 UEH", "make": "Volvo", "model": "Xc40", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 109, "tier": "critical"}, {"reg": "BL74 EZU", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 99, "tier": "critical"}, {"reg": "LB72 MHA", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 95, "tier": "critical"}, {"reg": "PJ25 RJV", "make": "Peugeot", "model": "E -5008", "adv": "Advertised", "prep": "READY", "age": 89, "tier": "slow"}, {"reg": "MD73 LBZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 87, "tier": "slow"}, {"reg": "MT73 UGC", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 82, "tier": "slow"}, {"reg": "KF56 UBC", "make": "Ford", "model": "Galaxy", "adv": "UnAdvertised", "prep": "READY", "age": 179, "tier": "critical"}, {"reg": "SH72 FZG", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 66, "tier": "slow"}, {"reg": "LG23 VXM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 59, "tier": "ageing"}, {"reg": "LA74 KKB", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 58, "tier": "ageing"}, {"reg": "LJ73 CPG", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 54, "tier": "ageing"}, {"reg": "GN75 UTZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "age": 53, "tier": "ageing"}, {"reg": "LF73 WKZ", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 52, "tier": "ageing"}, {"reg": "LA72 YMX", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 47, "tier": "ageing"}, {"reg": "LE73 CYC", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 44, "tier": "ageing"}, {"reg": "LD25 BKZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 40, "tier": "ageing"}, {"reg": "WR74 MGU", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 33, "tier": "ageing"}, {"reg": "MJ74 ZNA", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 33, "tier": "ageing"}, {"reg": "GJ74 ZHV", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 32, "tier": "ageing"}, {"reg": "MT73 HGO", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 30, "tier": "fresh"}, {"reg": "MC73 GHD", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 30, "tier": "fresh"}, {"reg": "LE73 GSZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 29, "tier": "fresh"}, {"reg": "SH73 RZD", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 29, "tier": "fresh"}, {"reg": "LF72 WKN", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "age": 26, "tier": "fresh"}, {"reg": "HJ73 KKN", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "age": 25, "tier": "fresh"}, {"reg": "SD73 XUA", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "age": 18, "tier": "fresh"}, {"reg": "WU25 BNB", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 16, "tier": "fresh"}, {"reg": "MH73 WNP", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "age": 15, "tier": "fresh"}, {"reg": "MA25 JBX", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 15, "tier": "fresh"}, {"reg": "SB73 DTK", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 12, "tier": "fresh"}, {"reg": "AJ23 OVY", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "age": 12, "tier": "fresh"}, {"reg": "AJ72 RSZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "age": 10, "tier": "fresh"}, {"reg": "LG24 XGH", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "age": 10, "tier": "fresh"}, {"reg": "MA23 LUH", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 8, "tier": "fresh"}, {"reg": "MM72 WCP", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 3, "tier": "fresh"}, {"reg": "BC73 KHP", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 2, "tier": "fresh"}];
+
+// ── FILTER FUNCTIONS ──
+const FILTERS = {
+  all:      v => true,
+  adv:      v => v.adv === "Advertised",
+  unadv:    v => v.adv === "UnAdvertised",
+  fresh:    v => v.tier === "fresh",
+  ageing:   v => v.tier === "ageing",
+  slow:     v => v.tier === "slow",
+  critical: v => v.tier === "critical",
+  over60:   v => v.age > 60,
+  ready:    v => v.prep === "READY",
+  repair:   v => v.prep === "NEED REPAIR",
+};
+
+// ── PANEL ──
+function renderPanel(results, title, subtitle) {
+  results = [...results].sort((a,b) => b.age - a.age);
+  document.getElementById('panelTitle').textContent = title;
+  document.getElementById('panelSub').textContent   = subtitle;
+  const body = document.getElementById('panelBody');
+  body.innerHTML = `<div class="panel-count">${results.length} vehicle${results.length!==1?'s':''} — sorted by age</div>`;
+  if (!results.length) {
+    body.innerHTML += '<div class="panel-empty">No vehicles match this filter.</div>';
+  } else {
+    results.forEach(v => {
+      const advCls  = v.adv==="Advertised" ? "adv" : "unadv";
+      const prepCls = v.prep==="READY" ? "ready" : "repair";
+      const prepLbl = v.prep==="READY" ? "Ready" : "Need Repair";
+      body.innerHTML += `
+        <div class="vcard">
+          <div class="vcard-top">
+            <span class="vcard-reg">${v.reg}</span>
+            <span class="vcard-age ${v.tier}">${v.age}d</span>
+          </div>
+          <div class="vcard-mid">${v.make} ${v.model}</div>
+          <div class="vcard-bottom">
+            <span class="vtag ${advCls}">${v.adv}</span>
+            <span class="vtag ${prepCls}">${prepLbl}</span>
+            <span class="vtag ${v.tier}">${v.tier.charAt(0).toUpperCase()+v.tier.slice(1)}</span>
+          </div>
+        </div>`;
+    });
+  }
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('panel').classList.add('open');
+}
+
+function drillDown(filterKey, title, subtitle) {
+  renderPanel(STOCK.filter(FILTERS[filterKey]||(_=>true)), title, subtitle);
+}
+
+function drillDownCustom(results, title, subtitle) {
+  renderPanel(results, title, subtitle);
+}
+
+function closePanel() {
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('panel').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Escape') closePanel(); });
+
+// ── CHARTS ──
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.color       = '#8f97ab';
+Chart.defaults.borderColor = '#e2e5ea';
+
+const C = { fresh:'#16a34a', ageing:'#ca8a04', slow:'#ea580c', critical:'#dc2626', accent:'#1d4ed8' };
+
+// Age Distribution
+new Chart(document.getElementById('ageChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Fresh\n0–30d','Ageing\n31–60d','Slow\n61–90d','Critical\n90+d'],
+    datasets: [{
+      data: [17,11,4,7],
+      backgroundColor: ['rgba(22,163,74,0.1)','rgba(202,138,4,0.1)','rgba(234,88,12,0.1)','rgba(220,38,38,0.1)'],
+      borderColor: [C.fresh,C.ageing,C.slow,C.critical],
+      borderWidth:2, borderRadius:6, borderSkipped:false,
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    onClick(e,els) {
+      if(!els.length) return;
+      const keys   = ['fresh','ageing','slow','critical'];
+      const titles = ['Fresh Stock','Ageing Stock','Slow Stock','Critical Stock'];
+      const subs   = ['0–30 days','31–60 days','61–90 days','90+ days'];
+      const i = els[0].index;
+      drillDown(keys[i], titles[i], `Vehicles aged ${subs[i]}`);
+    },
+    plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.raw} vehicles — click to view`}} },
+    scales:{
+      x:{grid:{display:false},ticks:{font:{size:11}}},
+      y:{grid:{color:'#f0f2f5'},ticks:{stepSize:3,font:{size:11}},border:{display:false}}
+    }
+  }
+});
+
+// Prep Doughnut
+new Chart(document.getElementById('prepChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Ready','Need Repair'],
+    datasets: [{
+      data: [25,14],
+      backgroundColor: ['rgba(22,163,74,0.1)','rgba(220,38,38,0.1)'],
+      borderColor: [C.fresh,C.critical],
+      borderWidth:2, hoverOffset:4,
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false, cutout:'68%',
+    onClick(e,els) {
+      if(!els.length) return;
+      if(els[0].index===0) drillDown('ready','Ready Vehicles','25 vehicles fully prepared');
+      else drillDown('repair','Need Repair Vehicles','14 vehicles awaiting repair');
+    },
+    plugins:{
+      legend:{position:'right',labels:{boxWidth:10,padding:14,font:{size:11}}},
+      tooltip:{callbacks:{label:ctx=>` ${ctx.raw} vehicles — click to view`}}
+    }
+  }
+});
+
+// Adv vs UnAdv
+new Chart(document.getElementById('advChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Fresh','Ageing','Slow','Critical'],
+    datasets: [
+      { label:'Advertised',   data:[8,8,4,5], backgroundColor:'rgba(29,78,216,0.1)',  borderColor:C.accent,  borderWidth:2, borderRadius:5 },
+      { label:'UnAdvertised', data:[9,3,0,2],    backgroundColor:'rgba(202,138,4,0.1)', borderColor:C.ageing, borderWidth:2, borderRadius:5 }
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    onClick(e,els) {
+      if(!els.length) return;
+      const tiers=['fresh','ageing','slow','critical'];
+      const ti=els[0].index; const di=els[0].datasetIndex;
+      const isAdv=di===0; const tier=tiers[ti];
+      const results=STOCK.filter(v=>v.tier===tier&&(isAdv?v.adv==='Advertised':v.adv==='UnAdvertised'));
+      drillDownCustom(results,`${isAdv?'Advertised':'UnAdvertised'} — ${tier.charAt(0).toUpperCase()+tier.slice(1)}`,`${results.length} vehicles`);
+    },
+    plugins:{
+      legend:{position:'top',labels:{boxWidth:10,padding:16,font:{size:11}}},
+      tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw} — click to view`}}
+    },
+    scales:{
+      x:{grid:{display:false},ticks:{font:{size:11}}},
+      y:{grid:{color:'#f0f2f5'},ticks:{stepSize:2,font:{size:11}},border:{display:false}}
+    }
+  }
+});
+
+// Makes
+const makeLabels  = ["Tesla", "Porsche", "Volvo", "Peugeot", "Ford"];
+const makeValues  = [35, 1, 1, 1, 1];
+const makeBg      = ["rgba(29,78,216,0.1)", "rgba(22,163,74,0.1)", "rgba(202,138,4,0.1)", "rgba(234,88,12,0.1)", "rgba(220,38,38,0.1)"];
+const makeBorders = ["#1d4ed8", "#16a34a", "#ca8a04", "#ea580c", "#dc2626"];
+
+new Chart(document.getElementById('makeChart'), {
+  type: 'bar',
+  data: {
+    labels: makeLabels,
+    datasets: [{ data:makeValues, backgroundColor:makeBg, borderColor:makeBorders, borderWidth:2, borderRadius:5 }]
+  },
+  options: {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    onClick(e,els) {
+      if(!els.length) return;
+      const m = makeLabels[els[0].index];
+      drillDownCustom(STOCK.filter(v=>v.make===m), `${m} — Live Stock`, `${STOCK.filter(v=>v.make===m).length} vehicles`);
+    },
+    plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.raw} vehicles — click to view`}} },
+    scales:{
+      x:{grid:{color:'#f0f2f5'},ticks:{font:{size:11}},border:{display:false}},
+      y:{grid:{display:false},ticks:{font:{size:12,weight:'500'}}}
+    }
+  }
+});
+</script>
+</body>
+</html>
