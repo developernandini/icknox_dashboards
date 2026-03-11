@@ -2,314 +2,615 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ICKNOX — Operations Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICKNOX — Stock Health Report</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--bg:#f0f2f5;--surface:#fff;--border:#e2e5ea;--border2:#c8ccd6;
---text:#0f1117;--text2:#455068;--text3:#8f97ab;
---fresh:#16a34a;--ageing:#ca8a04;--slow:#ea580c;--critical:#dc2626;
---accent:#1d4ed8;--purple:#7c3aed;--teal:#0d9488;--gold:#b45309;
---fresh-bg:#f0fdf4;--ageing-bg:#fefce8;--slow-bg:#fff7ed;--critical-bg:#fef2f2;
---accent-bg:#eff6ff;--purple-bg:#f5f3ff;--teal-bg:#f0fdfa;--gold-bg:#fffbeb;
---fresh-b:#86efac;--ageing-b:#fde047;--slow-b:#fdba74;--critical-b:#fca5a5;
---accent-b:#bfdbfe;--purple-b:#ddd6fe;--teal-b:#99f6e4;--gold-b:#fcd34d;--pw:520px}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-.hd{background:#0f1117;padding:0 40px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
-.hl{display:flex;align-items:center;gap:16px}
-.logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#fff}
-.hdiv{width:1px;height:18px;background:rgba(255,255,255,.15)}
-.hsub{font-size:12px;color:rgba(255,255,255,.4)}
-.hdate{font-size:11px;color:rgba(255,255,255,.3)}
-.main{padding:28px 40px 60px;max-width:1600px;margin:0 auto}
-.sh{display:flex;align-items:center;gap:12px;margin-bottom:14px;margin-top:28px}
-.sh:first-child{margin-top:0}
-.sl{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);white-space:nowrap}
-.sr{flex:1;height:1px;background:var(--border)}
-.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
-.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px 13px 13px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s;user-select:none}
-.kpi:hover{border-color:var(--border2);box-shadow:0 2px 12px rgba(0,0,0,.07);transform:translateY(-1px)}
-.kpi.nc{cursor:default}.kpi.nc:hover{transform:none;box-shadow:none;border-color:var(--border)}
-.ks{position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
-.s-blue{background:var(--accent)}.s-green{background:var(--fresh)}.s-red{background:var(--critical)}
-.s-amber{background:var(--ageing)}.s-purple{background:var(--purple)}.s-orange{background:var(--slow)}
-.s-teal{background:var(--teal)}.s-gold{background:var(--gold)}
-.kl{font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
-.kv{font-family:'Syne',sans-serif;font-size:32px;font-weight:700;line-height:1;margin-bottom:3px}
-.c-blue{color:var(--accent)}.c-green{color:var(--fresh)}.c-red{color:var(--critical)}
-.c-amber{color:var(--ageing)}.c-purple{color:var(--purple)}.c-orange{color:var(--slow)}
-.c-teal{color:var(--teal)}.c-gold{color:var(--gold)}
-.ksub{font-size:10px;color:var(--text3)}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.oc{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.och{padding:13px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
-.och.red{background:var(--critical-bg);border-bottom-color:var(--critical-b)}
-.och.amb{background:var(--ageing-bg);border-bottom-color:var(--ageing-b)}
-.och.orn{background:var(--slow-bg);border-bottom-color:var(--slow-b)}
-.och.grn{background:var(--fresh-bg);border-bottom-color:var(--fresh-b)}
-.och.pur{background:var(--purple-bg);border-bottom-color:var(--purple-b)}
-.och.tea{background:var(--teal-bg);border-bottom-color:var(--teal-b)}
-.och.gld{background:var(--gold-bg);border-bottom-color:var(--gold-b)}
-.oct{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.och.red .oct{color:var(--critical)}.och.amb .oct{color:var(--ageing)}.och.orn .oct{color:var(--slow)}
-.och.grn .oct{color:var(--fresh)}.och.pur .oct{color:var(--purple)}.och.tea .oct{color:var(--teal)}.och.gld .oct{color:var(--gold)}
-.ocn{font-family:'Syne',sans-serif;font-size:22px;font-weight:700}
-.och.red .ocn{color:var(--critical)}.och.amb .ocn{color:var(--ageing)}.och.orn .ocn{color:var(--slow)}
-.och.grn .ocn{color:var(--fresh)}.och.pur .ocn{color:var(--purple)}.och.tea .ocn{color:var(--teal)}.och.gld .ocn{color:var(--gold)}
-.vr{display:flex;align-items:center;padding:10px 18px;border-bottom:1px solid var(--border);gap:10px;cursor:pointer;transition:background .12s}
-.vr:last-child{border-bottom:none}.vr:hover{background:var(--bg)}
-.vreg{font-family:'Inter',monospace;font-size:11px;font-weight:700;background:var(--bg);border:1px solid var(--border2);border-radius:4px;padding:2px 7px;white-space:nowrap;min-width:86px;text-align:center}
-.vi{flex:1;min-width:0}
-.vn{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.vm{font-size:10px;color:var(--text3);margin-top:1px}
-.vage{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;min-width:40px;text-align:right;flex-shrink:0}
-.vage.fresh{color:var(--fresh)}.vage.ageing{color:var(--ageing)}.vage.slow{color:var(--slow)}.vage.critical{color:var(--critical)}
-.emp{padding:20px 18px;text-align:center;color:var(--text3);font-size:12px}
-.badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0;white-space:nowrap}
-.b-missed{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
-.b-soon{background:#fefce8;color:#ca8a04;border:1px solid #fde047}
-.b-dep{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
-.b-yr25{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
-.b-yr24{background:#f0fdf4;color:#16a34a;border:1px solid #86efac}
-.b-num{background:#0f1117;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0}
-.vr.priority{background:linear-gradient(90deg,#fffbeb 0%,#fff 100%);border-left:3px solid var(--gold)}
-.vr.priority:hover{background:linear-gradient(90deg,#fef3c7 0%,var(--bg) 100%)}
-.top5-banner{background:var(--gold-bg);border-bottom:1px solid var(--gold-b);padding:8px 18px;display:flex;align-items:center;gap:8px}
-.top5-label{font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.8px}
-.rest-banner{background:var(--bg);border-bottom:1px solid var(--border);padding:6px 18px}
-.rest-label{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
-.mot-row{display:flex;align-items:flex-start;padding:14px 18px;border-bottom:1px solid var(--border);gap:12px;transition:background .12s}
-.mot-row:last-child{border-bottom:none}.mot-row:hover{background:var(--bg)}
-.mot-date-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;flex-shrink:0;white-space:nowrap;margin-top:2px}
-.mot-missed-badge{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
-.mot-soon-badge{background:#fefce8;color:#ca8a04;border:1px solid #fde047}
-.mot-comment{margin-top:7px}
-.mot-comment input{width:100%;border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:11px;color:var(--text);background:var(--bg);font-family:'Inter',sans-serif;outline:none;transition:border-color .15s}
-.mot-comment input:focus{border-color:var(--border2);background:#fff}
-.mot-status-btns{display:flex;gap:5px;margin-top:6px}
-.msb{font-size:9px;font-weight:700;padding:3px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text3);transition:all .15s;text-transform:uppercase;letter-spacing:.4px}
-.msb:hover{border-color:var(--border2);background:var(--surface)}
-.msb.active.pending{background:#fefce8;color:#ca8a04;border-color:#fde047}
-.msb.active.booked{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-b)}
-.msb.active.done{background:var(--fresh-bg);color:var(--fresh);border-color:var(--fresh-b)}
-.vr.dep-highlight{background:linear-gradient(90deg,#f5f3ff 0%,#fff 100%);border-left:3px solid var(--purple)}
-.vr.dep-highlight:hover{background:linear-gradient(90deg,#ede9fe 0%,var(--bg) 100%)}
-.ov{position:fixed;inset:0;background:rgba(15,17,23,.4);backdrop-filter:blur(2px);z-index:100;opacity:0;pointer-events:none;transition:opacity .25s}
-.ov.open{opacity:1;pointer-events:all}
-.pn{position:fixed;top:0;right:0;bottom:0;width:var(--pw);background:var(--surface);border-left:1px solid var(--border);z-index:101;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);box-shadow:-8px 0 40px rgba(0,0,0,.12)}
-.pn.open{transform:translateX(0)}
-.pnh{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
-.pnt{font-size:14px;font-weight:700;margin-bottom:2px}
-.pns{font-size:11px;color:var(--text3)}
-.pnc{width:28px;height:28px;border-radius:6px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text2);flex-shrink:0}
-.pnc:hover{background:var(--border)}
-.pnb{flex:1;overflow-y:auto}
-.ds{padding:16px 20px;border-bottom:1px solid var(--border)}.ds:last-child{border-bottom:none}
-.dl{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
-.dg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.di{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px 12px}
-.dil{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
-.dv{font-size:14px;font-weight:700}
-.dreg{font-family:'Inter',monospace;font-size:22px;font-weight:800;letter-spacing:1px;margin-bottom:4px}
-.dname{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:12px}
-.dtags{display:flex;gap:6px;flex-wrap:wrap}
-.dtag{font-size:10px;font-weight:600;padding:3px 10px;border-radius:10px;text-transform:uppercase;letter-spacing:.4px}
-.dtag.adv{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-b)}
-.dtag.unadv{background:var(--bg);color:var(--text3);border:1px solid var(--border2)}
-.dtag.ready{background:var(--fresh-bg);color:var(--fresh);border:1px solid var(--fresh-b)}
-.dtag.repair{background:var(--critical-bg);color:var(--critical);border:1px solid var(--critical-b)}
-.dtag.arrived{background:var(--fresh-bg);color:var(--fresh);border:1px solid var(--fresh-b)}
-.dtag.notarr{background:var(--ageing-bg);color:var(--ageing);border:1px solid var(--ageing-b)}
-.dtag.nopics{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
-.dtag.pics{background:var(--fresh-bg);color:var(--fresh);border:1px solid var(--fresh-b)}
-.dtag.fresh{background:var(--fresh-bg);color:var(--fresh);border:1px solid var(--fresh-b)}
-.dtag.ageing{background:var(--ageing-bg);color:var(--ageing);border:1px solid var(--ageing-b)}
-.dtag.slow{background:var(--slow-bg);color:var(--slow);border:1px solid var(--slow-b)}
-.dtag.critical{background:var(--critical-bg);color:var(--critical);border:1px solid var(--critical-b)}
-.dtag.motbad{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
-.dtag.motsoon{background:#fefce8;color:#ca8a04;border:1px solid #fde047}
-.dtag.dep{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-b)}
-@media(max-width:1400px){.kg{grid-template-columns:repeat(5,1fr)}.g3{grid-template-columns:1fr 1fr}}
-@media(max-width:900px){.kg{grid-template-columns:repeat(3,1fr)}.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}} @media(max-width:600px){
+  :root {
+    --bg:#f0f2f5; --surface:#ffffff; --border:#e2e5ea; --border2:#c8ccd6;
+    --text:#0f1117; --text2:#455068; --text3:#8f97ab;
+    --fresh:#16a34a; --ageing:#ca8a04; --slow:#ea580c; --critical:#dc2626;
+    --fresh-bg:#f0fdf4; --ageing-bg:#fefce8; --slow-bg:#fff7ed; --critical-bg:#fef2f2;
+    --fresh-border:#86efac; --ageing-border:#fde047; --slow-border:#fdba74; --critical-border:#fca5a5;
+    --accent:#1d4ed8; --accent-bg:#eff6ff; --accent-border:#bfdbfe;
+    --panel-w:480px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
 
-.hd{padding:0 16px}
+  /* HEADER */
+  .header{background:#0f1117;padding:0 40px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+  .header-left{display:flex;align-items:center;gap:16px;}
+  .logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#fff;letter-spacing:0.5px;}
+  .hdivider{width:1px;height:18px;background:rgba(255,255,255,0.15);}
+  .header-sub{font-size:12px;color:rgba(255,255,255,0.4);}
+  .header-right{display:flex;align-items:center;gap:16px;}
+  .live-pill{display:flex;align-items:center;gap:6px;background:rgba(22,163,74,0.15);border:1px solid rgba(22,163,74,0.3);border-radius:20px;padding:3px 11px;font-size:10px;font-weight:600;color:#4ade80;letter-spacing:0.8px;text-transform:uppercase;}
+  .live-dot{width:5px;height:5px;border-radius:50%;background:#4ade80;animation:blink 2s infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+  .hdate{font-size:11px;color:rgba(255,255,255,0.3);}
+  .click-hint{font-size:10px;color:rgba(255,255,255,0.35);}
 
-.main{padding:20px 16px 40px}
+  /* LAYOUT */
+  .main{padding:28px 40px 40px;max-width:1560px;margin:0 auto;}
+  .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;margin-top:28px;}
+  .section-head:first-child{margin-top:0;}
+  .section-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);white-space:nowrap;}
+  .section-rule{flex:1;height:1px;background:var(--border);}
 
-.kg{grid-template-columns:repeat(2,1fr)}
+  /* KPI CARDS */
+  .kpi-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 16px 16px;position:relative;overflow:hidden;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s,transform 0.15s;user-select:none;}
+  .kpi:hover{border-color:var(--border2);box-shadow:0 2px 12px rgba(0,0,0,0.07);transform:translateY(-1px);}
+  .kpi.no-click{cursor:default;}
+  .kpi.no-click:hover{transform:none;box-shadow:none;border-color:var(--border);}
+  .kpi-stripe{position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0;}
+  .kpi-stripe.blue{background:var(--accent);} .kpi-stripe.fresh{background:var(--fresh);}
+  .kpi-stripe.ageing{background:var(--ageing);} .kpi-stripe.critical{background:var(--critical);}
+  .kpi-stripe.neutral{background:var(--border2);}
+  .kpi-label{font-size:10px;font-weight:600;letter-spacing:0.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+  .kpi-value{font-family:'Syne',sans-serif;font-size:38px;font-weight:700;line-height:1;color:var(--text);margin-bottom:5px;}
+  .kpi-value.blue{color:var(--accent);} .kpi-value.fresh{color:var(--fresh);}
+  .kpi-value.ageing{color:var(--ageing);} .kpi-value.critical{color:var(--critical);}
+  .kpi-sub{font-size:11px;color:var(--text3);}
+  .kpi-tip{position:absolute;bottom:8px;right:10px;font-size:9px;color:var(--text3);opacity:0;transition:opacity 0.15s;}
+  .kpi:hover .kpi-tip{opacity:1;}
 
-.g3{grid-template-columns:1fr}
+  /* CARDS */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;}
+  .card-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px;}
+  .card-sub{font-size:11px;color:var(--text3);margin-bottom:18px;}
+  .chart-wrap{position:relative;}
 
-.g2{grid-template-columns:1fr}
+  /* GRIDS */
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .grid-2-1{display:grid;grid-template-columns:1.6fr 1fr;gap:12px;}
 
-.kv{font-size:26px}
+  /* TIER PILLS */
+  .tier-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .tier-pill{border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;border:1px solid;cursor:pointer;transition:box-shadow 0.15s,transform 0.15s;user-select:none;}
+  .tier-pill:hover{box-shadow:0 2px 10px rgba(0,0,0,0.08);transform:translateY(-1px);}
+  .tier-pill.fresh{background:var(--fresh-bg);border-color:var(--fresh-border);}
+  .tier-pill.ageing{background:var(--ageing-bg);border-color:var(--ageing-border);}
+  .tier-pill.slow{background:var(--slow-bg);border-color:var(--slow-border);}
+  .tier-pill.critical{background:var(--critical-bg);border-color:var(--critical-border);}
+  .tier-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+  .fresh .tier-name{color:var(--fresh);} .ageing .tier-name{color:var(--ageing);}
+  .slow  .tier-name{color:var(--slow);} .critical .tier-name{color:var(--critical);}
+  .tier-count{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;line-height:1;text-align:right;}
+  .fresh .tier-count{color:var(--fresh);} .ageing .tier-count{color:var(--ageing);}
+  .slow  .tier-count{color:var(--slow);} .critical .tier-count{color:var(--critical);}
+  .tier-pct{font-size:10px;color:var(--text3);text-align:right;}
 
-.pn{width:100%}
+  /* PREP BARS */
+  .prep-clickable{cursor:pointer;border-radius:6px;padding:4px 6px;margin:-4px -6px;transition:background 0.15s;}
+  .prep-clickable:hover{background:var(--bg);}
+  .prep-head{display:flex;justify-content:space-between;margin-bottom:5px;}
+  .prep-name{font-size:12px;font-weight:500;color:var(--text2);}
+  .prep-num{font-size:12px;color:var(--text3);}
+  .bar-bg{height:7px;background:var(--bg);border-radius:4px;overflow:hidden;border:1px solid var(--border);}
+  .bar-fill{height:100%;border-radius:4px;}
 
-}
+  /* ADV BOXES */
+  .adv-boxes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+  .adv-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s;user-select:none;}
+  .adv-box:hover{border-color:var(--border2);box-shadow:0 2px 10px rgba(0,0,0,0.07);}
+  .adv-box-label{font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);margin-bottom:5px;}
+  .adv-box-val{font-family:'Syne',sans-serif;font-size:30px;font-weight:700;line-height:1;}
+  .adv-box-val.blue{color:var(--accent);} .adv-box-val.ageing{color:var(--ageing);}
+  .adv-box-sub{font-size:10px;color:var(--text3);margin-top:4px;}
+
+  /* CRITICAL TABLE */
+  .table-scroll{width:100%;overflow-x:auto;}
+  .table-scroll table{min-width:720px;}
+  .alert-banner{background:var(--critical-bg);border:1px solid var(--critical-border);border-radius:8px;padding:10px 16px;display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .alert-text{font-size:12px;font-weight:600;color:var(--critical);}
+  .alert-sub{font-size:11px;color:var(--text3);margin-left:auto;}
+  table{width:100%;border-collapse:collapse;font-size:12px;}
+  thead th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text3);border-bottom:2px solid var(--border);background:var(--bg);}
+  tbody td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text2);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover td{background:var(--bg);}
+  .reg-tag{font-family:'Inter',monospace;font-size:11px;font-weight:600;background:var(--bg);border:1px solid var(--border2);border-radius:4px;padding:3px 8px;color:var(--text);white-space:nowrap;letter-spacing:0.3px;}
+  .age-tag{font-size:12px;font-weight:700;padding:3px 9px;border-radius:5px;display:inline-block;}
+  .age-tag.critical{background:var(--critical-bg);color:var(--critical);border:1px solid var(--critical-border);}
+  .sdot{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;}
+  .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .dot.ready{background:var(--fresh);} .dot.repair{background:var(--critical);}
+  .dot.adv{background:var(--accent);}  .dot.unadv{background:var(--text3);}
+  .critical-flag{font-size:11px;font-weight:700;color:var(--critical);display:flex;align-items:center;gap:5px;}
+
+  /* SLIDE PANEL */
+  .overlay{position:fixed;inset:0;background:rgba(15,17,23,0.4);backdrop-filter:blur(2px);z-index:100;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+  .overlay.open{opacity:1;pointer-events:all;}
+  .panel{position:fixed;top:0;right:0;bottom:0;width:var(--panel-w);background:var(--surface);border-left:1px solid var(--border);z-index:101;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);box-shadow:-8px 0 40px rgba(0,0,0,0.12);}
+  .panel.open{transform:translateX(0);}
+  .panel-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;}
+  .panel-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;}
+  .panel-sub{font-size:11px;color:var(--text3);}
+  .panel-close{width:28px;height:28px;border-radius:6px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text2);flex-shrink:0;transition:background 0.15s;}
+  .panel-close:hover{background:var(--border);}
+  .panel-body{flex:1;overflow-y:auto;padding:16px 20px;}
+  .panel-count{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;}
+  .vcard{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px;}
+  .vcard-top{display:flex;align-items:center;justify-content:space-between;}
+  .vcard-reg{font-family:'Inter',monospace;font-size:12px;font-weight:700;color:var(--text);background:var(--surface);border:1px solid var(--border2);border-radius:4px;padding:2px 8px;letter-spacing:0.3px;}
+  .vcard-age{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
+  .vcard-age.fresh{color:var(--fresh);} .vcard-age.ageing{color:var(--ageing);}
+  .vcard-age.slow{color:var(--slow);}   .vcard-age.critical{color:var(--critical);}
+  .vcard-mid{font-size:13px;font-weight:600;color:var(--text);}
+  .vcard-bottom{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .vtag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:0.4px;}
+  .vtag.adv{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border);}
+  .vtag.unadv{background:var(--bg);color:var(--text3);border:1px solid var(--border2);}
+  .vtag.ready{background:var(--fresh-bg);color:var(--fresh);border:1px solid var(--fresh-border);}
+  .vtag.repair{background:var(--critical-bg);color:var(--critical);border:1px solid var(--critical-border);}
+  .vtag.fresh{background:var(--fresh-bg);color:var(--fresh);border:1px solid var(--fresh-border);}
+  .vtag.ageing{background:var(--ageing-bg);color:var(--ageing);border:1px solid var(--ageing-border);}
+  .vtag.slow{background:var(--slow-bg);color:var(--slow);border:1px solid var(--slow-border);}
+  .vtag.critical{background:var(--critical-bg);color:var(--critical);border:1px solid var(--critical-border);}
+  .panel-empty{text-align:center;color:var(--text3);padding:40px 20px;font-size:13px;}
+
+  /* FOOTER */
+
+  @media(max-width:1200px){
+    .kpi-grid{grid-template-columns:repeat(4,1fr);}
+    .grid-3{grid-template-columns:1fr 1fr;}
+    .grid-2-1{grid-template-columns:1fr;}
+  }
 </style>
 </head>
 <body>
-<div class="hd"><div class="hl"><div class="logo">ICKNOX</div><div class="hdiv"></div><div class="hsub">Operations Dashboard</div></div><div class="hdate">11 March 2026</div></div><div class="main"><div class="sh"><div class="sl">Summary</div><div class="sr"></div></div><div class="kg"><div class="kpi nc"><div class="ks s-blue"></div><div class="kl">Live Stock</div><div class="kv c-blue">35</div><div class="ksub">All vehicles</div></div><div class="kpi nc"><div class="ks s-green"></div><div class="kl">Fully Live</div><div class="kv c-green">12</div><div class="ksub">Adv + pics</div></div><div class="kpi" onclick="openSection('Advertised — Ready, No Pictures',S1_ALL)"><div class="ks s-amber"></div><div class="kl">Adv · Ready · No Pics</div><div class="kv c-amber">7</div><div class="ksub">5 priority today</div></div><div class="kpi" onclick="openSection('Advertised — Repair, No Pics',S2)"><div class="ks s-orange"></div><div class="kl">Adv · Repair · No Pics</div><div class="kv c-orange">3</div><div class="ksub">In repair, live</div></div><div class="kpi" onclick="openSection('Advertised — Not Arrived',S3)"><div class="ks s-purple"></div><div class="kl">Adv · Not Arrived</div><div class="kv c-purple">0</div><div class="ksub">Not on site</div></div><div class="kpi" onclick="openSection('Ready — Not Advertised',S4)"><div class="ks s-orange"></div><div class="kl">Ready · Not Adv</div><div class="kv c-orange">2</div><div class="ksub">Can go live</div></div><div class="kpi" onclick="openSection('Repair — Not Advertised',S5)"><div class="ks s-red"></div><div class="kl">Repair · Not Adv</div><div class="kv c-red">10</div><div class="ksub">Blocking ads</div></div><div class="kpi" onclick="openSection('Not Advertised — Not Arrived',S6)"><div class="ks s-purple"></div><div class="kl">Not Adv · Not Arrived</div><div class="kv c-purple">1</div><div class="ksub">Awaiting collection</div></div><div class="kpi" onclick="openSection('Under Deposit',S_DEP)"><div class="ks s-teal"></div><div class="kl">Under Deposit</div><div class="kv c-teal">9</div><div class="ksub">Sold, pending</div></div></div><div class="sh"><div class="sl">Advertised — Action Required</div><div class="sr"></div></div><div class="g3"><div class="oc"><div class="och amb"><div class="oct">&#128247; Adv — Ready, No Pictures</div><div class="ocn">7</div></div><div class="top5-banner"><span style="font-size:14px">&#11088;</span><span class="top5-label">Today’s Top 5 Priority</span></div><div id="s1-top5"></div><div class="rest-banner"><span class="rest-label">Remaining — 2 vehicles</span></div><div id="s1-rest"></div></div><div class="oc"><div class="och orn"><div class="oct">&#9874; Adv — Repair, No Pics</div><div class="ocn">3</div></div><div id="s2"></div></div><div class="oc"><div class="och pur"><div class="oct">&#8987; Adv — Not Arrived</div><div class="ocn">0</div></div><div id="s3"></div></div></div><div class="sh" style="margin-top:16px"><div class="sl">Not Advertised — Action Required</div><div class="sr"></div></div><div class="g3"><div class="oc"><div class="och orn"><div class="oct">&#8679; Ready — Not Advertised</div><div class="ocn">2</div></div><div id="s4"></div></div><div class="oc"><div class="och red"><div class="oct">&#9888; Repair — Not Advertised</div><div class="ocn">10</div></div><div id="s5" style="display:grid;grid-template-columns:1fr 1fr"></div></div><div class="oc"><div class="och pur"><div class="oct">&#8987; Not Adv — Not Arrived</div><div class="ocn">1</div></div><div id="s6"></div></div></div><div class="sh" style="margin-top:16px"><div class="sl">MOT Alerts</div><div class="sr"></div></div><div class="g2"><div class="oc"><div class="och red"><div class="oct">&#128683; MOT Missed</div><div class="ocn">2</div></div><div id="mot-missed"></div></div><div class="oc"><div class="och amb"><div class="oct">&#9888; MOT Due Soon</div><div class="ocn">3</div></div><div id="mot-soon"></div></div></div><div class="sh" style="margin-top:16px"><div class="sl">Under Deposit</div><div class="sr"></div></div><div class="oc"><div class="och tea"><div class="oct">&#128176; Sold — Under Deposit</div><div class="ocn">9</div></div><div id="s-dep" style="display:grid;grid-template-columns:1fr 1fr 1fr"></div></div><div class="sh" style="margin-top:16px"><div class="sl">Fully Live — Advertised &amp; Pictures Taken</div><div class="sr"></div></div><div class="oc"><div class="och grn"><div class="oct">&#10003; Live on All Platforms</div><div class="ocn">12</div></div><div id="s0" style="display:grid;grid-template-columns:1fr 1fr 1fr"></div></div></div><div class="ov" id="ov" onclick="closePanel()"></div><div class="pn" id="pn"><div class="pnh"><div><div class="pnt" id="pnT"></div><div class="pns" id="pnS"></div></div><div class="pnc" onclick="closePanel()">&#10005;</div></div><div class="pnb" id="pnB"></div></div>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo">ICKNOX</div>
+    <div class="hdivider"></div>
+    <div class="header-sub">Stock Health Report</div>
+  </div>
+  <div class="header-right">
+    <div class="hdate">07 March 2026</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="section-head">
+    <div class="section-label">Summary</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi" onclick="drillDown('all','All Live Stock','All 39 active vehicles')">
+      <div class="kpi-stripe blue"></div>
+      <div class="kpi-label">Total Live Stock</div>
+      <div class="kpi-value blue">39</div>
+      <div class="kpi-sub">Active vehicles</div>
+      <div class="kpi-tip">Click to view all &rarr;</div>
+    </div>
+    <div class="kpi" onclick="drillDown('adv','Advertised Stock','25 vehicles currently advertised')">
+      <div class="kpi-stripe blue"></div>
+      <div class="kpi-label">Advertised</div>
+      <div class="kpi-value blue">25</div>
+      <div class="kpi-sub">64.1% of live stock</div>
+      <div class="kpi-tip">Click to view &rarr;</div>
+    </div>
+    <div class="kpi" onclick="drillDown('unadv','UnAdvertised Stock','14 vehicles not yet advertised')">
+      <div class="kpi-stripe neutral"></div>
+      <div class="kpi-label">UnAdvertised</div>
+      <div class="kpi-value">14</div>
+      <div class="kpi-sub">35.9% of live stock</div>
+      <div class="kpi-tip">Click to view &rarr;</div>
+    </div>
+    <div class="kpi no-click">
+      <div class="kpi-stripe neutral"></div>
+      <div class="kpi-label">Avg Age</div>
+      <div class="kpi-value">55<span style="font-size:16px;color:var(--text3);font-weight:400"> days</span></div>
+      <div class="kpi-sub">Across live stock</div>
+    </div>
+    <div class="kpi" onclick="drillDown('over60','Over 60 Days','11 vehicles aged more than 60 days')">
+      <div class="kpi-stripe ageing"></div>
+      <div class="kpi-label">Over 60 Days</div>
+      <div class="kpi-value ageing">11</div>
+      <div class="kpi-sub">28.2% of live stock</div>
+      <div class="kpi-tip">Click to view &rarr;</div>
+    </div>
+    <div class="kpi" onclick="drillDown('critical','Critical Stock','7 vehicles aged more than 90 days')">
+      <div class="kpi-stripe critical"></div>
+      <div class="kpi-label">Over 90 Days</div>
+      <div class="kpi-value critical">7</div>
+      <div class="kpi-sub">17.9% of live stock</div>
+      <div class="kpi-tip">Click to view &rarr;</div>
+    </div>
+    <div class="kpi" onclick="drillDown('ready','Ready Vehicles','25 vehicles fully prepared and ready to sell')">
+      <div class="kpi-stripe fresh"></div>
+      <div class="kpi-label">Ready</div>
+      <div class="kpi-value fresh">64<span style="font-size:16px;font-weight:400;color:var(--text3)">%</span></div>
+      <div class="kpi-sub">25 Ready &middot; 14 Need Repair</div>
+      <div class="kpi-tip">Click to view &rarr;</div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-label">Stock Age Analysis</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">Age Distribution</div>
+      <div class="chart-wrap" style="height:210px;"><canvas id="ageChart"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Stock Tier Breakdown</div>
+      <div class="tier-grid">
+        <div class="tier-pill fresh" onclick="drillDown('fresh','Fresh Stock','Vehicles aged 0–30 days')">
+          <div><div class="tier-name">Fresh</div><div class="tier-days">0 – 30 days</div></div>
+          <div><div class="tier-count">17</div><div class="tier-pct">43.6%</div></div>
+        </div>
+        <div class="tier-pill ageing" onclick="drillDown('ageing','Ageing Stock','Vehicles aged 31–60 days')">
+          <div><div class="tier-name">Ageing</div><div class="tier-days">31 – 60 days</div></div>
+          <div><div class="tier-count">11</div><div class="tier-pct">28.2%</div></div>
+        </div>
+        <div class="tier-pill slow" onclick="drillDown('slow','Slow Stock','Vehicles aged 61–90 days')">
+          <div><div class="tier-name">Slow</div><div class="tier-days">61 – 90 days</div></div>
+          <div><div class="tier-count">4</div><div class="tier-pct">10.3%</div></div>
+        </div>
+        <div class="tier-pill critical" onclick="drillDown('critical','Critical Stock','Vehicles aged over 90 days')">
+          <div><div class="tier-name">Critical</div><div class="tier-days">90+ days</div></div>
+          <div><div class="tier-count">7</div><div class="tier-pct">17.9%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Preparation Status</div>
+      <div style="margin-bottom:14px;">
+        <div class="prep-clickable" onclick="drillDown('ready','Ready Vehicles','25 vehicles fully prepared')">
+          <div class="prep-head">
+            <span class="prep-name">Ready</span>
+            <span class="prep-num">25 of 39 &nbsp;&middot;&nbsp; 64%</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:64.1%;background:var(--fresh);"></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="prep-clickable" onclick="drillDown('repair','Need Repair Vehicles','14 vehicles awaiting repair')">
+          <div class="prep-head">
+            <span class="prep-name">Need Repair</span>
+            <span class="prep-num">14 of 39 &nbsp;&middot;&nbsp; 36%</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:35.9%;background:var(--critical);"></div></div>
+        </div>
+      </div>
+      <div style="margin-top:22px;">
+        <div class="chart-wrap" style="height:135px;"><canvas id="prepChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:16px;">
+    <div class="section-label">Listing Status &amp; Make</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="card-title">Advertised vs UnAdvertised</div>
+      <div class="adv-boxes">
+        <div class="adv-box" onclick="drillDown('adv','Advertised Stock','25 vehicles currently advertised')">
+          <div class="adv-box-label">Advertised</div>
+          <div class="adv-box-val blue">25</div>
+          <div class="adv-box-sub">Avg age: 63.6 days</div>
+        </div>
+        <div class="adv-box" onclick="drillDown('unadv','UnAdvertised Stock','14 vehicles not yet advertised')">
+          <div class="adv-box-label">UnAdvertised</div>
+          <div class="adv-box-val ageing">14</div>
+          <div class="adv-box-sub">Avg age: 41.1 days</div>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:170px;"><canvas id="advChart"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Make Distribution</div>
+      <div class="chart-wrap" style="height:240px;"><canvas id="makeChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:16px;">
+    <div class="section-label">Critical Stock — Action Required</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="card">
+    <div class="alert-banner">
+      <span style="font-size:15px;">&#9888;</span>
+      <span class="alert-text">7 vehicles in stock for over 90 days</span>
+      <span class="alert-sub">Sorted longest first — immediate action required</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Registration</th><th>Make</th><th>Model</th>
+            <th>Days in Stock</th><th>Listing</th><th>Prep Status</th><th>Tier</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td><span class="reg-tag">RX72YSD</span></td>
+          <td style="font-weight:500;color:var(--text);">Porsche</td>
+          <td>Turbo</td>
+          <td><span class="age-tag critical">339 days</span></td>
+          <td><span class="sdot"><span class="dot adv"></span>Advertised</span></td>
+          <td><span class="sdot"><span class="dot ready"></span>Ready</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+        <tr>
+          <td><span class="reg-tag">KF56 UBC</span></td>
+          <td style="font-weight:500;color:var(--text);">Ford</td>
+          <td>Galaxy</td>
+          <td><span class="age-tag critical">179 days</span></td>
+          <td><span class="sdot"><span class="dot unadv"></span>UnAdvertised</span></td>
+          <td><span class="sdot"><span class="dot ready"></span>Ready</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+        <tr>
+          <td><span class="reg-tag">AF72 TJZ</span></td>
+          <td style="font-weight:500;color:var(--text);">Tesla</td>
+          <td>Y Long Range</td>
+          <td><span class="age-tag critical">115 days</span></td>
+          <td><span class="sdot"><span class="dot adv"></span>Advertised</span></td>
+          <td><span class="sdot"><span class="dot ready"></span>Ready</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+        <tr>
+          <td><span class="reg-tag">BP74 JNN</span></td>
+          <td style="font-weight:500;color:var(--text);">Tesla</td>
+          <td>Y Long Range</td>
+          <td><span class="age-tag critical">110 days</span></td>
+          <td><span class="sdot"><span class="dot adv"></span>Advertised</span></td>
+          <td><span class="sdot"><span class="dot ready"></span>Ready</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+        <tr>
+          <td><span class="reg-tag">BN73 UEH</span></td>
+          <td style="font-weight:500;color:var(--text);">Volvo</td>
+          <td>Xc40</td>
+          <td><span class="age-tag critical">109 days</span></td>
+          <td><span class="sdot"><span class="dot unadv"></span>UnAdvertised</span></td>
+          <td><span class="sdot"><span class="dot repair"></span>Need Repair</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+        <tr>
+          <td><span class="reg-tag">BL74 EZU</span></td>
+          <td style="font-weight:500;color:var(--text);">Tesla</td>
+          <td>Y Long Range</td>
+          <td><span class="age-tag critical">99 days</span></td>
+          <td><span class="sdot"><span class="dot adv"></span>Advertised</span></td>
+          <td><span class="sdot"><span class="dot ready"></span>Ready</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+        <tr>
+          <td><span class="reg-tag">LB72 MHA</span></td>
+          <td style="font-weight:500;color:var(--text);">Tesla</td>
+          <td>Y Long Range</td>
+          <td><span class="age-tag critical">95 days</span></td>
+          <td><span class="sdot"><span class="dot adv"></span>Advertised</span></td>
+          <td><span class="sdot"><span class="dot ready"></span>Ready</span></td>
+          <td><span class="critical-flag">&#11044; Critical</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- SLIDE PANEL -->
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="panel" id="panel">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title" id="panelTitle"></div>
+      <div class="panel-sub"   id="panelSub"></div>
+    </div>
+    <div class="panel-close" onclick="closePanel()">&#10005;</div>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</div>
+
 <script>
-const S0=[{"reg": "RX72YSD", "make": "Porsche", "model": "Turbo", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 343, "tier": "critical", "year": 2022, "mileage": 10000, "mot": "", "deposit": false}, {"reg": "AF72 TJZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 119, "tier": "critical", "year": 2022, "mileage": 13000, "mot": "", "deposit": false}, {"reg": "BP74 JNN", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 114, "tier": "critical", "year": 2024, "mileage": 15400, "mot": "", "deposit": false}, {"reg": "LB72 MHA", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 99, "tier": "critical", "year": 2022, "mileage": 13000, "mot": "", "deposit": false}, {"reg": "MD73 LBZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 91, "tier": "critical", "year": 2023, "mileage": 12500, "mot": "", "deposit": false}, {"reg": "LJ73 CPG", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 58, "tier": "ageing", "year": 2023, "mileage": 6000, "mot": "", "deposit": false}, {"reg": "GN75 UTZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 57, "tier": "ageing", "year": 2025, "mileage": 3000, "mot": "", "deposit": false}, {"reg": "LD25 BKZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 44, "tier": "ageing", "year": 2025, "mileage": 9000, "mot": "", "deposit": false}, {"reg": "MC73 GHD", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 34, "tier": "ageing", "year": 2024, "mileage": 19000, "mot": "", "deposit": false}, {"reg": "SD73 XUA", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 22, "tier": "fresh", "year": 2023, "mileage": 12000, "mot": "", "deposit": false}, {"reg": "WU25 BNB", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 20, "tier": "fresh", "year": 2025, "mileage": 3000, "mot": "", "deposit": false}, {"reg": "RE20 MEV", "make": "Kia", "model": "Niro", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 7, "tier": "fresh", "year": 2020, "mileage": 35000, "mot": "", "deposit": false}];
-const S1_TOP5=[{"reg": "MJ74 ZNA", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 37, "tier": "ageing", "year": 2024, "mileage": 10000, "mot": "", "deposit": false}, {"reg": "LE73 CYC", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 48, "tier": "ageing", "year": 2023, "mileage": 4000, "mot": "", "deposit": false}, {"reg": "LE73 GSZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 33, "tier": "ageing", "year": 2024, "mileage": 28000, "mot": "", "deposit": false}, {"reg": "HJ73 KNN", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 29, "tier": "fresh", "year": 2023, "mileage": 14990, "mot": "", "deposit": false}, {"reg": "AJ23 OVY", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 16, "tier": "fresh", "year": 2023, "mileage": 9900, "mot": "SOON", "deposit": false}];
-const S1_REST=[{"reg": "LA72 YMX", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 51, "tier": "ageing", "year": 2022, "mileage": 17000, "mot": "", "deposit": false}, {"reg": "AJ72 RSZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 14, "tier": "fresh", "year": 2022, "mileage": 29000, "mot": "", "deposit": false}];
-const S1_ALL=[...S1_TOP5,...S1_REST];
-const S2=[{"reg": "LF73 WKZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 56, "tier": "ageing", "year": 2023, "mileage": 14000, "mot": "", "deposit": false}, {"reg": "SH73 RZD", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 33, "tier": "ageing", "year": 2023, "mileage": 7000, "mot": "", "deposit": false}, {"reg": "LG24 XGH", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 14, "tier": "fresh", "year": 2024, "mileage": 14900, "mot": "", "deposit": false}];
-const S3=[];
-const S4=[{"reg": "KF56 UBC", "make": "Ford", "model": "Galaxy", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 183, "tier": "critical", "year": 2006, "mileage": null, "mot": "MISSED", "deposit": false}, {"reg": "MH73 WNP", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 19, "tier": "fresh", "year": 2024, "mileage": 28000, "mot": "", "deposit": false}];
-const S5=[{"reg": "BN73 UEH", "make": "Volvo", "model": "Xc40", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 113, "tier": "critical", "year": 2023, "mileage": 6632, "mot": "", "deposit": false}, {"reg": "LG23 VXM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 63, "tier": "slow", "year": 2023, "mileage": 28000, "mot": "MISSED", "deposit": false}, {"reg": "GJ74 ZHV", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 36, "tier": "ageing", "year": 2024, "mileage": 15000, "mot": "", "deposit": false}, {"reg": "MT73 HGO", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 34, "tier": "ageing", "year": 2023, "mileage": 6294, "mot": "", "deposit": false}, {"reg": "LF72 WKN", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 30, "tier": "fresh", "year": 2022, "mileage": 12000, "mot": "SOON", "deposit": false}, {"reg": "MA25 JBX", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 19, "tier": "fresh", "year": 2025, "mileage": 11000, "mot": "", "deposit": false}, {"reg": "SB73 DTK", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 16, "tier": "fresh", "year": 2024, "mileage": 9900, "mot": "", "deposit": false}, {"reg": "MA23 LUH", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 12, "tier": "fresh", "year": 2023, "mileage": 22000, "mot": "SOON", "deposit": false}, {"reg": "MM72 WCP", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 7, "tier": "fresh", "year": 2022, "mileage": 16000, "mot": "", "deposit": false}, {"reg": "BC73 KHP", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 6, "tier": "fresh", "year": 2024, "mileage": 11000, "mot": "", "deposit": false}];
-const S6=[{"reg": "ND74 KVW", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 2, "tier": "fresh", "year": 2024, "mileage": 19000, "mot": "", "deposit": false}];
-const S_DEP=[{"reg": "BL74 EZU", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 103, "tier": "critical", "year": 2024, "mileage": 14980, "mot": "", "deposit": true}, {"reg": "LB73 AHV", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 99, "tier": "critical", "year": 2023, "mileage": 15000, "mot": "", "deposit": true}, {"reg": "PJ25 RJV", "make": "Peugeot", "model": "E -5008", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 93, "tier": "critical", "year": 2025, "mileage": 3000, "mot": "", "deposit": true}, {"reg": "MT73 UGC", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 86, "tier": "slow", "year": 2023, "mileage": 13700, "mot": "", "deposit": true}, {"reg": "SH72 FZG", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 70, "tier": "slow", "year": 2022, "mileage": 17000, "mot": "", "deposit": true}, {"reg": "LA74 KKB", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 62, "tier": "slow", "year": 2024, "mileage": null, "mot": "", "deposit": true}, {"reg": "WR74 MGU", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 37, "tier": "ageing", "year": 2024, "mileage": 14500, "mot": "", "deposit": true}, {"reg": "KD59 SEV", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 27, "tier": "fresh", "year": 2023, "mileage": 25000, "mot": "", "deposit": true}, {"reg": "HG25 FZX", "make": "Tesla", "model": "3 Rwd", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 12, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "deposit": true}];
-const S_MOT_MISSED=[{"reg": "KF56 UBC", "make": "Ford", "model": "Galaxy", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 183, "tier": "critical", "year": 2006, "mileage": null, "mot": "MISSED", "deposit": false}, {"reg": "LG23 VXM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 63, "tier": "slow", "year": 2023, "mileage": 28000, "mot": "MISSED", "deposit": false}];
-const S_MOT_SOON=[{"reg": "LF72 WKN", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 30, "tier": "fresh", "year": 2022, "mileage": 12000, "mot": "SOON", "deposit": false}, {"reg": "AJ23 OVY", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 16, "tier": "fresh", "year": 2023, "mileage": 9900, "mot": "SOON", "deposit": false}, {"reg": "MA23 LUH", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 12, "tier": "fresh", "year": 2023, "mileage": 22000, "mot": "SOON", "deposit": false}];
+// ── ALL VEHICLE DATA (injected from Excel) ──
+const STOCK = [{"reg": "RX72YSD", "make": "Porsche", "model": "Turbo", "adv": "Advertised", "prep": "READY", "age": 339, "tier": "critical"}, {"reg": "AF72 TJZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 115, "tier": "critical"}, {"reg": "BP74 JNN", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 110, "tier": "critical"}, {"reg": "BN73 UEH", "make": "Volvo", "model": "Xc40", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 109, "tier": "critical"}, {"reg": "BL74 EZU", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 99, "tier": "critical"}, {"reg": "LB72 MHA", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 95, "tier": "critical"}, {"reg": "PJ25 RJV", "make": "Peugeot", "model": "E -5008", "adv": "Advertised", "prep": "READY", "age": 89, "tier": "slow"}, {"reg": "MD73 LBZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 87, "tier": "slow"}, {"reg": "MT73 UGC", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 82, "tier": "slow"}, {"reg": "KF56 UBC", "make": "Ford", "model": "Galaxy", "adv": "UnAdvertised", "prep": "READY", "age": 179, "tier": "critical"}, {"reg": "SH72 FZG", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 66, "tier": "slow"}, {"reg": "LG23 VXM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 59, "tier": "ageing"}, {"reg": "LA74 KKB", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 58, "tier": "ageing"}, {"reg": "LJ73 CPG", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 54, "tier": "ageing"}, {"reg": "GN75 UTZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "age": 53, "tier": "ageing"}, {"reg": "LF73 WKZ", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 52, "tier": "ageing"}, {"reg": "LA72 YMX", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 47, "tier": "ageing"}, {"reg": "LE73 CYC", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 44, "tier": "ageing"}, {"reg": "LD25 BKZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 40, "tier": "ageing"}, {"reg": "WR74 MGU", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 33, "tier": "ageing"}, {"reg": "MJ74 ZNA", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 33, "tier": "ageing"}, {"reg": "GJ74 ZHV", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 32, "tier": "ageing"}, {"reg": "MT73 HGO", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 30, "tier": "fresh"}, {"reg": "MC73 GHD", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 30, "tier": "fresh"}, {"reg": "LE73 GSZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 29, "tier": "fresh"}, {"reg": "SH73 RZD", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 29, "tier": "fresh"}, {"reg": "LF72 WKN", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "age": 26, "tier": "fresh"}, {"reg": "HJ73 KKN", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "age": 25, "tier": "fresh"}, {"reg": "SD73 XUA", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "age": 18, "tier": "fresh"}, {"reg": "WU25 BNB", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "age": 16, "tier": "fresh"}, {"reg": "MH73 WNP", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "age": 15, "tier": "fresh"}, {"reg": "MA25 JBX", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 15, "tier": "fresh"}, {"reg": "SB73 DTK", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 12, "tier": "fresh"}, {"reg": "AJ23 OVY", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "age": 12, "tier": "fresh"}, {"reg": "AJ72 RSZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "age": 10, "tier": "fresh"}, {"reg": "LG24 XGH", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "age": 10, "tier": "fresh"}, {"reg": "MA23 LUH", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 8, "tier": "fresh"}, {"reg": "MM72 WCP", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 3, "tier": "fresh"}, {"reg": "BC73 KHP", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "age": 2, "tier": "fresh"}];
 
-const TIERS={fresh:"Fresh",ageing:"Ageing",slow:"Slow",critical:"Critical"};
-const motData={};
-function tier(a){return a<=30?"fresh":a<=60?"ageing":a<=90?"slow":"critical";}
-function tc(t){return t==="fresh"?"var(--fresh)":t==="ageing"?"var(--ageing)":t==="slow"?"var(--slow)":"var(--critical)";}
-function ukYear(reg){
-  const r=reg.replace(/\s+/g,"").toUpperCase();
-  if(r.length<4)return null;
-  const c=parseInt(r.substring(2,4));
-  if(c>=2&&c<=50)return 2000+c;
-  if(c>=52&&c<=99)return 2000+(c-50);
-  return null;
-}
-function yrBadge(reg){
-  const yr=ukYear(reg);if(!yr)return"";
-  if(yr>=2025)return'<span class="badge b-yr25">'+yr+'</span>';
-  if(yr>=2024)return'<span class="badge b-yr24">'+yr+'</span>';
-  return'<span class="badge" style="background:#f8fafc;color:var(--text3);border:1px solid var(--border)">'+yr+'</span>';
-}
-function getMot(r){return motData[r]||{status:"",note:""};}
-function setMot(r,k,v){if(!motData[r])motData[r]={status:"",note:""};motData[r][k]=v;}
-function vrow(v,opts){
-  opts=opts||{};
-  const t=tier(v.age);
-  const meta=v.mileage?v.mileage.toLocaleString()+"mi":"\u2014";
-  const motB=v.mot==="MISSED"?'<span class="badge b-missed">MOT Missed</span>':
-             v.mot==="SOON" ?'<span class="badge b-soon">MOT Soon</span>':"";
-  const depB=v.deposit?'<span class="badge b-dep">Deposit</span>':"";
-  const numB=opts.num!=null?'<div class="b-num">'+opts.num+"</div>":"";
-  const cls=opts.priority?"vr priority":opts.deposit?"vr dep-highlight":"vr";
-  return'<div class="'+cls+'" data-v="'+encodeURIComponent(JSON.stringify(v))+'" onclick="openDetailEl(this)">'+
-    numB+'<span class="vreg">'+v.reg+'</span>'+
-    '<div class="vi"><div class="vn">'+v.make+' '+v.model+'</div>'+
-    '<div class="vm">'+meta+'</div></div>'+
-    yrBadge(v.reg)+motB+depB+
-    '<span class="vage '+t+'">'+v.age+'d</span></div>';
-}
-function openDetailEl(el){
-  openDetail(JSON.parse(decodeURIComponent(el.getAttribute("data-v"))));
-}
-function openDetail(v){
-  const t=tier(v.age);const yr=ukYear(v.reg);
-  const ac=v.adv==="Advertised"?"adv":"unadv";
-  const pc=v.prep==="READY"?"ready":"repair";const pl=v.prep==="READY"?"Ready":"Need Repair";
-  const sc=v.status==="ARRIVED"?"arrived":"notarr";const sl=v.status==="ARRIVED"?"Arrived":"Not Arrived";
-  const xc=v.pics?"pics":"nopics";const xl=v.pics?"Pictures Taken":"No Pictures";
-  const mt=v.mot==="MISSED"?'<span class="dtag motbad">MOT Missed</span>':
-           v.mot==="SOON" ?'<span class="dtag motsoon">MOT Due Soon</span>':"";
-  const dep=v.deposit?'<span class="dtag dep">Under Deposit</span>':"";
-  document.getElementById("pnT").textContent=v.reg;
-  document.getElementById("pnS").textContent=v.make+" "+v.model;
-  document.getElementById("pnB").innerHTML=
-    '<div class="ds"><div class="dreg">'+v.reg+'</div>'+
-    '<div class="dname">'+v.make+' '+v.model+'</div>'+
-    '<div class="dtags">'+
-      '<span class="dtag '+ac+'">'+v.adv+'</span>'+
-      '<span class="dtag '+pc+'">'+pl+'</span>'+
-      '<span class="dtag '+sc+'">'+sl+'</span>'+
-      '<span class="dtag '+xc+'">'+xl+'</span>'+
-      '<span class="dtag '+t+'">'+TIERS[t]+'</span>'+mt+dep+
-    '</div></div>'+
-    '<div class="ds"><div class="dl">Vehicle Details</div><div class="dg">'+
-    '<div class="di"><div class="dil">Age in Stock</div>'+
-      '<div class="dv" style="color:'+tc(t)+'">'+v.age+' days</div></div>'+
-    '<div class="di"><div class="dil">Reg Year</div>'+
-      '<div class="dv">'+(yr||"\u2014")+'</div></div>'+
-    '<div class="di"><div class="dil">Year</div>'+
-      '<div class="dv">'+(v.year||"\u2014")+'</div></div>'+
-    '<div class="di"><div class="dil">Mileage</div>'+
-      '<div class="dv">'+(v.mileage?v.mileage.toLocaleString()+" mi":"\u2014")+'</div></div>'+
-    '</div></div>';
-  openP();
-}
-function motRow(v,type){
-  const d=getMot(v.reg);
-  const bCls=type==="missed"?"mot-missed-badge":"mot-soon-badge";
-  const lbl=type==="missed"?"MOT MISSED":"MOT DUE SOON";
-  const enc=encodeURIComponent(JSON.stringify(v));
-  const btns=["Pending","Booked","Done"].map(function(s){
-    const a=d.status===s?"active "+s.toLowerCase():"";
-    return'<button class="msb '+a+'" data-reg="'+v.reg+'" data-status="'+s+
-          '" onclick="event.stopPropagation();setMotStatusBtn(this)">'+s+'</button>';
-  }).join("");
-  return'<div class="mot-row">'+
-    '<div style="flex-shrink:0;min-width:90px">'+
-      '<span class="mot-date-badge '+bCls+'">'+lbl+'</span></div>'+
-    '<div class="vi">'+
-      '<div class="vn" style="cursor:pointer" data-v="'+enc+'" onclick="openDetailEl(this)">'+
-        v.reg+' \u2014 '+v.make+' '+v.model+'</div>'+
-      '<div class="mot-comment" onclick="event.stopPropagation()">'+
-        '<input type="text" placeholder="Add note (e.g. booked 10 Mar, call AA)"'+
-          ' data-reg="'+v.reg+'" value="'+d.note+'"'+
-          ' oninput="setMot(this.dataset.reg,\'note\',this.value)">'+
-        '<div class="mot-status-btns">'+btns+'</div>'+
-      '</div></div>'+
-    '<span class="vage '+tier(v.age)+'">'+v.age+'d</span></div>';
-}
-function setMotStatusBtn(btn){
-  const reg=btn.dataset.reg,status=btn.dataset.status;
-  const d=getMot(reg);const ns=d.status===status?"":status;
-  setMot(reg,"status",ns);
-  btn.closest(".mot-row").querySelectorAll(".msb").forEach(function(b){
-    b.className="msb";if(b.dataset.status===ns)b.className="msb active "+ns.toLowerCase();
-  });
-}
-function renderList(id,arr,opts){
-  opts=opts||{};const el=document.getElementById(id);if(!el)return;
-  el.innerHTML=arr.length
-    ?arr.map(function(v,i){return vrow(v,Object.assign({},opts,{num:opts.numbered?i+1:null}));}).join("")
-    :'<div class="emp">\u2713 None \u2014 all clear</div>';
-}
-function renderMotList(id,arr,type){
-  const el=document.getElementById(id);if(!el)return;
-  el.innerHTML=arr.length
-    ?arr.map(function(v){return motRow(v,type);}).join("")
-    :'<div class="emp">\u2713 No alerts</div>';
-}
-function openSection(title,arr){
-  document.getElementById("pnT").textContent=title;
-  document.getElementById("pnS").textContent=arr.length+" vehicle"+(arr.length!==1?"s":"");
-  document.getElementById("pnB").innerHTML=arr.length
-    ?arr.map(function(v,i){return vrow(v,{num:i+1});}).join("")
-    :'<div class="emp" style="padding:40px">\u2713 None</div>';
-  openP();
-}
-function openP(){document.getElementById("ov").classList.add("open");document.getElementById("pn").classList.add("open");}
-function closePanel(){document.getElementById("ov").classList.remove("open");document.getElementById("pn").classList.remove("open");}
-document.addEventListener("keydown",function(e){if(e.key==="Escape")closePanel();});
-renderList("s0",S0);
-(function(){
-  var e5=document.getElementById("s1-top5"),eR=document.getElementById("s1-rest");
-  if(e5)e5.innerHTML=S1_TOP5.length
-    ?S1_TOP5.map(function(v,i){return vrow(v,{priority:true,num:i+1});}).join("")
-    :'<div class="emp">\u2713 None</div>';
-  if(eR)eR.innerHTML=S1_REST.length
-    ?S1_REST.map(function(v){return vrow(v);}).join("")
-    :'<div class="emp">\u2713 None</div>';
-})();
-renderList("s2",S2);renderList("s3",S3);renderList("s4",S4);
-renderList("s5",S5);renderList("s6",S6);
-renderList("s-dep",S_DEP,{deposit:true});
-renderMotList("mot-missed",S_MOT_MISSED,"missed");
-renderMotList("mot-soon",S_MOT_SOON,"soon");
+// ── FILTER FUNCTIONS ──
+const FILTERS = {
+  all:      v => true,
+  adv:      v => v.adv === "Advertised",
+  unadv:    v => v.adv === "UnAdvertised",
+  fresh:    v => v.tier === "fresh",
+  ageing:   v => v.tier === "ageing",
+  slow:     v => v.tier === "slow",
+  critical: v => v.tier === "critical",
+  over60:   v => v.age > 60,
+  ready:    v => v.prep === "READY",
+  repair:   v => v.prep === "NEED REPAIR",
+};
 
+// ── PANEL ──
+function renderPanel(results, title, subtitle) {
+  results = [...results].sort((a,b) => b.age - a.age);
+  document.getElementById('panelTitle').textContent = title;
+  document.getElementById('panelSub').textContent   = subtitle;
+  const body = document.getElementById('panelBody');
+  body.innerHTML = `<div class="panel-count">${results.length} vehicle${results.length!==1?'s':''} — sorted by age</div>`;
+  if (!results.length) {
+    body.innerHTML += '<div class="panel-empty">No vehicles match this filter.</div>';
+  } else {
+    results.forEach(v => {
+      const advCls  = v.adv==="Advertised" ? "adv" : "unadv";
+      const prepCls = v.prep==="READY" ? "ready" : "repair";
+      const prepLbl = v.prep==="READY" ? "Ready" : "Need Repair";
+      body.innerHTML += `
+        <div class="vcard">
+          <div class="vcard-top">
+            <span class="vcard-reg">${v.reg}</span>
+            <span class="vcard-age ${v.tier}">${v.age}d</span>
+          </div>
+          <div class="vcard-mid">${v.make} ${v.model}</div>
+          <div class="vcard-bottom">
+            <span class="vtag ${advCls}">${v.adv}</span>
+            <span class="vtag ${prepCls}">${prepLbl}</span>
+            <span class="vtag ${v.tier}">${v.tier.charAt(0).toUpperCase()+v.tier.slice(1)}</span>
+          </div>
+        </div>`;
+    });
+  }
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('panel').classList.add('open');
+}
+
+function drillDown(filterKey, title, subtitle) {
+  renderPanel(STOCK.filter(FILTERS[filterKey]||(_=>true)), title, subtitle);
+}
+
+function drillDownCustom(results, title, subtitle) {
+  renderPanel(results, title, subtitle);
+}
+
+function closePanel() {
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('panel').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Escape') closePanel(); });
+
+// ── CHARTS ──
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.color       = '#8f97ab';
+Chart.defaults.borderColor = '#e2e5ea';
+
+const C = { fresh:'#16a34a', ageing:'#ca8a04', slow:'#ea580c', critical:'#dc2626', accent:'#1d4ed8' };
+
+// Age Distribution
+new Chart(document.getElementById('ageChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Fresh\n0–30d','Ageing\n31–60d','Slow\n61–90d','Critical\n90+d'],
+    datasets: [{
+      data: [17,11,4,7],
+      backgroundColor: ['rgba(22,163,74,0.1)','rgba(202,138,4,0.1)','rgba(234,88,12,0.1)','rgba(220,38,38,0.1)'],
+      borderColor: [C.fresh,C.ageing,C.slow,C.critical],
+      borderWidth:2, borderRadius:6, borderSkipped:false,
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    onClick(e,els) {
+      if(!els.length) return;
+      const keys   = ['fresh','ageing','slow','critical'];
+      const titles = ['Fresh Stock','Ageing Stock','Slow Stock','Critical Stock'];
+      const subs   = ['0–30 days','31–60 days','61–90 days','90+ days'];
+      const i = els[0].index;
+      drillDown(keys[i], titles[i], `Vehicles aged ${subs[i]}`);
+    },
+    plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.raw} vehicles — click to view`}} },
+    scales:{
+      x:{grid:{display:false},ticks:{font:{size:11}}},
+      y:{grid:{color:'#f0f2f5'},ticks:{stepSize:3,font:{size:11}},border:{display:false}}
+    }
+  }
+});
+
+// Prep Doughnut
+new Chart(document.getElementById('prepChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Ready','Need Repair'],
+    datasets: [{
+      data: [25,14],
+      backgroundColor: ['rgba(22,163,74,0.1)','rgba(220,38,38,0.1)'],
+      borderColor: [C.fresh,C.critical],
+      borderWidth:2, hoverOffset:4,
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false, cutout:'68%',
+    onClick(e,els) {
+      if(!els.length) return;
+      if(els[0].index===0) drillDown('ready','Ready Vehicles','25 vehicles fully prepared');
+      else drillDown('repair','Need Repair Vehicles','14 vehicles awaiting repair');
+    },
+    plugins:{
+      legend:{position:'right',labels:{boxWidth:10,padding:14,font:{size:11}}},
+      tooltip:{callbacks:{label:ctx=>` ${ctx.raw} vehicles — click to view`}}
+    }
+  }
+});
+
+// Adv vs UnAdv
+new Chart(document.getElementById('advChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Fresh','Ageing','Slow','Critical'],
+    datasets: [
+      { label:'Advertised',   data:[8,8,4,5], backgroundColor:'rgba(29,78,216,0.1)',  borderColor:C.accent,  borderWidth:2, borderRadius:5 },
+      { label:'UnAdvertised', data:[9,3,0,2],    backgroundColor:'rgba(202,138,4,0.1)', borderColor:C.ageing, borderWidth:2, borderRadius:5 }
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    onClick(e,els) {
+      if(!els.length) return;
+      const tiers=['fresh','ageing','slow','critical'];
+      const ti=els[0].index; const di=els[0].datasetIndex;
+      const isAdv=di===0; const tier=tiers[ti];
+      const results=STOCK.filter(v=>v.tier===tier&&(isAdv?v.adv==='Advertised':v.adv==='UnAdvertised'));
+      drillDownCustom(results,`${isAdv?'Advertised':'UnAdvertised'} — ${tier.charAt(0).toUpperCase()+tier.slice(1)}`,`${results.length} vehicles`);
+    },
+    plugins:{
+      legend:{position:'top',labels:{boxWidth:10,padding:16,font:{size:11}}},
+      tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw} — click to view`}}
+    },
+    scales:{
+      x:{grid:{display:false},ticks:{font:{size:11}}},
+      y:{grid:{color:'#f0f2f5'},ticks:{stepSize:2,font:{size:11}},border:{display:false}}
+    }
+  }
+});
+
+// Makes
+const makeLabels  = ["Tesla", "Porsche", "Volvo", "Peugeot", "Ford"];
+const makeValues  = [35, 1, 1, 1, 1];
+const makeBg      = ["rgba(29,78,216,0.1)", "rgba(22,163,74,0.1)", "rgba(202,138,4,0.1)", "rgba(234,88,12,0.1)", "rgba(220,38,38,0.1)"];
+const makeBorders = ["#1d4ed8", "#16a34a", "#ca8a04", "#ea580c", "#dc2626"];
+
+new Chart(document.getElementById('makeChart'), {
+  type: 'bar',
+  data: {
+    labels: makeLabels,
+    datasets: [{ data:makeValues, backgroundColor:makeBg, borderColor:makeBorders, borderWidth:2, borderRadius:5 }]
+  },
+  options: {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    onClick(e,els) {
+      if(!els.length) return;
+      const m = makeLabels[els[0].index];
+      drillDownCustom(STOCK.filter(v=>v.make===m), `${m} — Live Stock`, `${STOCK.filter(v=>v.make===m).length} vehicles`);
+    },
+    plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.raw} vehicles — click to view`}} },
+    scales:{
+      x:{grid:{color:'#f0f2f5'},ticks:{font:{size:11}},border:{display:false}},
+      y:{grid:{display:false},ticks:{font:{size:12,weight:'500'}}}
+    }
+  }
+});
 </script>
 </body>
+
 </html>
