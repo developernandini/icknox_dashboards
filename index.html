@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ICKNOX">
+<meta name="theme-color" content="#0f1117">
+<meta name="description" content="ICKNOX Operations Dashboard">
+<!-- PWA manifest embedded inline -->
+<link rel="manifest" href="data:application/json,{%22name%22:%22ICKNOX%20Operations%20Dashboard%22,%22short_name%22:%22ICKNOX%22,%22start_url%22:%22./%22,%22display%22:%22standalone%22,%22background_color%22:%22%230f1117%22,%22theme_color%22:%22%230f1117%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns%3D'http://www.w3.org/2000/svg'%20viewBox%3D'0%200%20192%20192'%3E%3Crect%20width%3D'192'%20height%3D'192'%20rx%3D'32'%20fill%3D'%230f1117'/%3E%3Ctext%20x%3D'96'%20y%3D'130'%20font-size%3D'96'%20text-anchor%3D'middle'%20fill%3D'white'%20font-weight%3D'bold'%20font-family%3D'Arial'%3EI%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
+<title>ICKNOX — Operations Dashboard</title>
+<style>
+
+:root {
+  --bg:#f0f2f5; --surface:#fff; --border:#e2e5ea; --border2:#c8ccd6;
+  --text:#0f1117; --text2:#455068; --text3:#8f97ab;
+  --fresh:#16a34a; --ageing:#ca8a04; --slow:#ea580c; --critical:#dc2626;
+  --accent:#1d4ed8; --purple:#7c3aed; --teal:#0d9488; --gold:#b45309;
+  --fresh-bg:#f0fdf4; --ageing-bg:#fefce8; --slow-bg:#fff7ed; --critical-bg:#fef2f2;
+  --accent-bg:#eff6ff; --purple-bg:#f5f3ff; --teal-bg:#f0fdfa; --gold-bg:#fffbeb;
+  --fresh-b:#86efac; --ageing-b:#fde047; --slow-b:#fdba74; --critical-b:#fca5a5;
+  --accent-b:#bfdbfe; --purple-b:#ddd6fe; --teal-b:#99f6e4; --gold-b:#fcd34d;
+  --radius:10px; --panel-w:min(520px,100vw);
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent }
+html { -webkit-text-size-adjust:100%; scroll-behavior:smooth }
+body {
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  font-size:13px; line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+
+/* ── HEADER ── */
+.hd {
+  background:#0f1117; padding:0 16px; height:54px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:50;
+  padding-top:env(safe-area-inset-top);
+}
+.hl { display:flex; align-items:center; gap:10px; min-width:0; overflow:hidden }
+.logo { font-size:18px; font-weight:800; color:#fff; flex-shrink:0; letter-spacing:-0.5px }
+.hdiv { width:1px; height:16px; background:rgba(255,255,255,.15); flex-shrink:0 }
+.hsub { font-size:11px; color:rgba(255,255,255,.4); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.hdate { font-size:10px; color:rgba(255,255,255,.3); flex-shrink:0; margin-left:6px; white-space:nowrap }
+
+/* update toast */
+.toast {
+  position:fixed; bottom:calc(16px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%) translateY(80px);
+  background:#0f1117; color:#fff; font-size:12px; font-weight:600;
+  padding:10px 18px; border-radius:20px; z-index:200;
+  box-shadow:0 4px 20px rgba(0,0,0,.3); transition:transform .3s ease; white-space:nowrap;
+}
+.toast.show { transform:translateX(-50%) translateY(0) }
+
+/* install banner */
+.install-banner {
+  background:var(--accent); color:#fff; padding:10px 16px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  font-size:12px; font-weight:600;
+}
+.install-banner button {
+  background:#fff; color:var(--accent); border:none; border-radius:6px;
+  padding:5px 12px; font-size:11px; font-weight:700; cursor:pointer; flex-shrink:0;
+}
+.install-banner .ib-close { background:transparent; color:rgba(255,255,255,.7); font-size:18px; padding:0 4px }
+
+/* ── MAIN ── */
+.main { padding:14px 12px 80px; max-width:1600px; margin:0 auto }
+
+/* ── SECTION HEADER ── */
+.sh { display:flex; align-items:center; gap:8px; margin-bottom:10px; margin-top:22px }
+.sh:first-child { margin-top:0 }
+.sl { font-size:9px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:var(--text3); white-space:nowrap }
+.sr { flex:1; height:1px; background:var(--border) }
+
+/* ── KPI GRID ── */
+.kg { display:grid; grid-template-columns:repeat(3,1fr); gap:7px }
+.kpi {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:10px 8px 8px; position:relative; overflow:hidden;
+  cursor:pointer; transition:border-color .15s, transform .12s;
+  user-select:none; -webkit-user-select:none; min-width:0; touch-action:manipulation;
+}
+.kpi:active { transform:scale(0.96); border-color:var(--border2) }
+.kpi.nc { cursor:default } .kpi.nc:active { transform:none }
+.ks { position:absolute; top:0; left:0; right:0; height:3px; border-radius:var(--radius) var(--radius) 0 0 }
+.s-blue{background:var(--accent)} .s-green{background:var(--fresh)} .s-red{background:var(--critical)}
+.s-amber{background:var(--ageing)} .s-purple{background:var(--purple)} .s-orange{background:var(--slow)}
+.s-teal{background:var(--teal)} .s-gold{background:var(--gold)}
+.kl {
+  font-size:7.5px; font-weight:700; letter-spacing:.2px; text-transform:uppercase;
+  color:var(--text3); margin-bottom:3px; line-height:1.3;
+  overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+}
+.kv { font-size:26px; font-weight:800; line-height:1; margin-bottom:2px; letter-spacing:-1px }
+.c-blue{color:var(--accent)} .c-green{color:var(--fresh)} .c-red{color:var(--critical)}
+.c-amber{color:var(--ageing)} .c-purple{color:var(--purple)} .c-orange{color:var(--slow)}
+.c-teal{color:var(--teal)} .c-gold{color:var(--gold)}
+.ksub { font-size:8px; color:var(--text3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+
+/* ── GRIDS ── */
+.g3 { display:grid; grid-template-columns:1fr; gap:10px }
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:10px }
+.vlist-grid { display:grid; grid-template-columns:1fr }
+.vlist-grid .vr { border-bottom:1px solid var(--border) !important }
+
+/* ── OPERATION CARDS ── */
+.oc { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden }
+.och { padding:10px 13px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border) }
+.och.red{background:var(--critical-bg);border-bottom-color:var(--critical-b)}
+.och.amb{background:var(--ageing-bg);border-bottom-color:var(--ageing-b)}
+.och.orn{background:var(--slow-bg);border-bottom-color:var(--slow-b)}
+.och.grn{background:var(--fresh-bg);border-bottom-color:var(--fresh-b)}
+.och.pur{background:var(--purple-bg);border-bottom-color:var(--purple-b)}
+.och.tea{background:var(--teal-bg);border-bottom-color:var(--teal-b)}
+.och.gld{background:var(--gold-bg);border-bottom-color:var(--gold-b)}
+.oct { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-right:8px }
+.och.red .oct{color:var(--critical)} .och.amb .oct{color:var(--ageing)} .och.orn .oct{color:var(--slow)}
+.och.grn .oct{color:var(--fresh)} .och.pur .oct{color:var(--purple)} .och.tea .oct{color:var(--teal)} .och.gld .oct{color:var(--gold)}
+.ocn { font-size:20px; font-weight:800; flex-shrink:0; letter-spacing:-0.5px }
+.och.red .ocn{color:var(--critical)} .och.amb .ocn{color:var(--ageing)} .och.orn .ocn{color:var(--slow)}
+.och.grn .ocn{color:var(--fresh)} .och.pur .ocn{color:var(--purple)} .och.tea .ocn{color:var(--teal)} .och.gld .ocn{color:var(--gold)}
+
+/* ── VEHICLE ROW ── */
+.vr {
+  display:flex; align-items:center; padding:9px 13px;
+  border-bottom:1px solid var(--border); gap:7px;
+  cursor:pointer; transition:background .1s; min-width:0; touch-action:manipulation;
+}
+.vr:last-child { border-bottom:none }
+.vr:active { background:var(--bg) }
+.vreg {
+  font-family:ui-monospace,'SF Mono','Courier New',monospace;
+  font-size:10px; font-weight:700; background:var(--bg);
+  border:1px solid var(--border2); border-radius:4px;
+  padding:2px 5px; white-space:nowrap; min-width:72px; text-align:center; flex-shrink:0;
+}
+.vi { flex:1; min-width:0 }
+.vn { font-size:11px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.vm { font-size:9px; color:var(--text3); margin-top:1px }
+.vage { font-size:15px; font-weight:800; min-width:34px; text-align:right; flex-shrink:0; letter-spacing:-0.5px }
+.vage.fresh{color:var(--fresh)} .vage.ageing{color:var(--ageing)} .vage.slow{color:var(--slow)} .vage.critical{color:var(--critical)}
+.emp { padding:18px 13px; text-align:center; color:var(--text3); font-size:11px }
+
+/* ── BADGES ── */
+.badge { font-size:8px; font-weight:700; padding:2px 5px; border-radius:7px; text-transform:uppercase; letter-spacing:.2px; flex-shrink:0; white-space:nowrap }
+.b-missed{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
+.b-soon{background:#fefce8;color:#ca8a04;border:1px solid #fde047}
+.b-dep{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+.b-yr25{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+.b-yr24{background:#f0fdf4;color:#16a34a;border:1px solid #86efac}
+.b-num { background:#0f1117; color:#fff; border-radius:50%; width:17px; height:17px; min-width:17px; display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:800; flex-shrink:0 }
+.vr.priority { background:linear-gradient(90deg,#fffbeb,#fff); border-left:3px solid var(--gold) }
+.vr.priority:active { background:linear-gradient(90deg,#fef3c7,var(--bg)) }
+.vr.dep-highlight { background:linear-gradient(90deg,#f5f3ff,#fff); border-left:3px solid var(--purple) }
+
+/* banners */
+.top5-banner { background:var(--gold-bg); border-bottom:1px solid var(--gold-b); padding:6px 13px; display:flex; align-items:center; gap:6px }
+.top5-label { font-size:9px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:.7px }
+.rest-banner { background:var(--bg); border-bottom:1px solid var(--border); padding:5px 13px }
+.rest-label { font-size:9px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:.7px }
+
+/* ── MOT ── */
+.mot-row { display:flex; align-items:flex-start; padding:10px 13px; border-bottom:1px solid var(--border); gap:9px; transition:background .1s }
+.mot-row:last-child { border-bottom:none }
+.mot-row:active { background:var(--bg) }
+.mot-date-badge { font-size:8px; font-weight:700; padding:2px 7px; border-radius:5px; flex-shrink:0; white-space:nowrap; margin-top:2px }
+.mot-missed-badge{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
+.mot-soon-badge{background:#fefce8;color:#ca8a04;border:1px solid #fde047}
+.mot-comment { margin-top:5px }
+.mot-comment input {
+  width:100%; border:1px solid var(--border); border-radius:5px;
+  padding:6px 8px; font-size:12px; color:var(--text); background:var(--bg);
+  font-family:inherit; outline:none; -webkit-appearance:none;
+}
+.mot-comment input:focus { border-color:var(--border2); background:#fff }
+.mot-status-btns { display:flex; gap:4px; margin-top:5px; flex-wrap:wrap }
+.msb {
+  font-size:10px; font-weight:700; padding:5px 12px; border-radius:5px;
+  cursor:pointer; border:1px solid var(--border); background:var(--bg); color:var(--text3);
+  touch-action:manipulation; -webkit-appearance:none;
+  text-transform:uppercase; letter-spacing:.3px; min-height:32px;
+}
+.msb.active.pending{background:#fefce8;color:#ca8a04;border-color:#fde047}
+.msb.active.booked{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-b)}
+.msb.active.done{background:var(--fresh-bg);color:var(--fresh);border-color:var(--fresh-b)}
+
+/* ── OVERLAY ── */
+.ov { position:fixed; inset:0; background:rgba(15,17,23,.5); backdrop-filter:blur(2px); z-index:100; opacity:0; pointer-events:none; transition:opacity .25s }
+.ov.open { opacity:1; pointer-events:all }
+
+/* ── SLIDE PANEL ── */
+/* Mobile: sheet slides up from bottom */
+.pn {
+  position:fixed; right:0; bottom:0; width:100%; max-height:92vh;
+  background:var(--surface); border-top:1px solid var(--border);
+  border-radius:18px 18px 0 0; z-index:101;
+  display:flex; flex-direction:column;
+  transform:translateY(100%);
+  transition:transform .32s cubic-bezier(.32,.72,0,1);
+  box-shadow:0 -8px 40px rgba(0,0,0,.14);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.pn.open { transform:translateY(0) }
+/* drag handle */
+.pn-handle { width:36px; height:4px; background:var(--border2); border-radius:2px; margin:10px auto 0; flex-shrink:0 }
+.pnh { padding:10px 16px 12px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between; flex-shrink:0 }
+.pnt { font-size:14px; font-weight:700; margin-bottom:2px }
+.pns { font-size:10px; color:var(--text3) }
+.pnc { width:30px; height:30px; min-width:30px; border-radius:6px; background:var(--bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px; color:var(--text2); touch-action:manipulation }
+.pnb { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain }
+
+/* ── DETAIL PANEL ── */
+.ds { padding:13px 15px; border-bottom:1px solid var(--border) } .ds:last-child { border-bottom:none }
+.dl { font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text3); margin-bottom:8px }
+.dg { display:grid; grid-template-columns:1fr 1fr; gap:7px }
+.di { background:var(--bg); border:1px solid var(--border); border-radius:7px; padding:9px 11px }
+.dil { font-size:9px; color:var(--text3); text-transform:uppercase; letter-spacing:.4px; margin-bottom:3px }
+.dv { font-size:14px; font-weight:700 }
+.dreg { font-family:ui-monospace,monospace; font-size:22px; font-weight:800; letter-spacing:1px; margin-bottom:4px }
+.dname { font-size:14px; font-weight:600; color:var(--text2); margin-bottom:10px }
+.dtags { display:flex; gap:5px; flex-wrap:wrap }
+.dtag { font-size:9px; font-weight:700; padding:3px 9px; border-radius:9px; text-transform:uppercase; letter-spacing:.3px }
+.dtag.adv{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-b)}
+.dtag.unadv{background:var(--bg);color:var(--text3);border:1px solid var(--border2)}
+.dtag.ready{background:var(--fresh-bg);color:var(--fresh);border:1px solid var(--fresh-b)}
+.dtag.repair{background:var(--critical-bg);color:var(--critical);border:1px solid var(--critical-b)}
+.dtag.arrived{background:var(--fresh-bg);color:var(--fresh);border:1px solid var(--fresh-b)}
+.dtag.notarr{background:var(--ageing-bg);color:var(--ageing);border:1px solid var(--ageing-b)}
+.dtag.nopics{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
+.dtag.pics{background:var(--fresh-bg);color:var(--fresh);border:1px solid var(--fresh-b)}
+.dtag.fresh{background:var(--fresh-bg);color:var(--fresh);border:1px solid var(--fresh-b)}
+.dtag.ageing{background:var(--ageing-bg);color:var(--ageing);border:1px solid var(--ageing-b)}
+.dtag.slow{background:var(--slow-bg);color:var(--slow);border:1px solid var(--slow-b)}
+.dtag.critical{background:var(--critical-bg);color:var(--critical);border:1px solid var(--critical-b)}
+.dtag.motbad{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
+.dtag.motsoon{background:#fefce8;color:#ca8a04;border:1px solid #fde047}
+.dtag.dep{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-b)}
+
+/* ── RESPONSIVE BREAKPOINTS ── */
+@media (min-width:600px) {
+  .main { padding:20px 20px 70px }
+  .hd  { padding:0 24px }
+  .kg  { grid-template-columns:repeat(3,1fr) }
+  .kv  { font-size:28px }
+  .vlist-grid { grid-template-columns:1fr 1fr }
+  /* desktop panel slides in from right */
+  .pn { top:0; right:0; bottom:0; left:auto; width:var(--panel-w); max-height:none; border-radius:0; border-top:none; border-left:1px solid var(--border); transform:translateX(100%); padding-bottom:0 }
+  .pn.open { transform:translateX(0) }
+  .pn-handle { display:none }
+  .pnh { padding:16px 18px }
+}
+@media (min-width:900px) {
+  .main { padding:24px 28px 60px }
+  .hd  { padding:0 32px }
+  .kg  { grid-template-columns:repeat(5,1fr) }
+  .kv  { font-size:30px }
+  .g3  { grid-template-columns:1fr 1fr 1fr }
+  .vlist-grid { grid-template-columns:1fr 1fr 1fr }
+}
+@media (min-width:1200px) {
+  .main { padding:28px 40px 60px }
+  .hd  { padding:0 40px }
+  .kv  { font-size:32px }
+}
+@media (min-width:1400px) {
+  .kg { grid-template-columns:repeat(9,1fr) }
+}
+
+</style>
+</head>
+<body>
+<div id="install-banner" class="install-banner" style="display:none"><span>&#128241; Install ICKNOX Dashboard as an app</span><div style="display:flex;gap:6px"><button onclick="installApp()">Install</button><button class="ib-close" onclick="dismissInstall()">&#10005;</button></div></div><div class="hd"><div class="hl"><div class="logo">ICKNOX</div><div class="hdiv"></div><div class="hsub">Operations Dashboard</div></div><div class="hdate" id="hdate">12 March 2026</div></div><div id="update-toast" class="toast">&#10003; Dashboard updated</div><div class="main"><div class="sh"><div class="sl">Summary</div><div class="sr"></div></div><div class="kg"><div class="kpi" onclick="openSection('All Live Stock',ALL_LIVE)"><div class="ks s-blue"></div><div class="kl">Live Stock</div><div class="kv c-blue">34</div><div class="ksub">Tap to view all</div></div><div class="kpi nc"><div class="ks s-green"></div><div class="kl">Fully Live</div><div class="kv c-green">11</div><div class="ksub">Adv + pics</div></div><div class="kpi" onclick="openSection('Adv — Ready, No Pics',S1_ALL)"><div class="ks s-amber"></div><div class="kl">Adv Ready No Pics</div><div class="kv c-amber">7</div><div class="ksub">5 priority</div></div><div class="kpi" onclick="openSection('Adv — Repair, No Pics',S2)"><div class="ks s-orange"></div><div class="kl">Adv Repair No Pics</div><div class="kv c-orange">5</div><div class="ksub">In repair, live</div></div><div class="kpi" onclick="openSection('Adv — Not Arrived',S3)"><div class="ks s-purple"></div><div class="kl">Adv Not Arrived</div><div class="kv c-purple">0</div><div class="ksub">Not on site</div></div><div class="kpi" onclick="openSection('Ready — Not Advertised',S4)"><div class="ks s-orange"></div><div class="kl">Ready Not Adv</div><div class="kv c-orange">2</div><div class="ksub">Can go live</div></div><div class="kpi" onclick="openSection('Repair — Not Advertised',S5)"><div class="ks s-red"></div><div class="kl">Repair Not Adv</div><div class="kv c-red">9</div><div class="ksub">Blocking ads</div></div><div class="kpi" onclick="openSection('Not Adv — Not Arrived',S6)"><div class="ks s-purple"></div><div class="kl">Not Adv Not Arr</div><div class="kv c-purple">0</div><div class="ksub">Awaiting</div></div><div class="kpi" onclick="openSection('Under Deposit',S_DEP)"><div class="ks s-teal"></div><div class="kl">Under Deposit</div><div class="kv c-teal">10</div><div class="ksub">Sold, pending</div></div></div><div class="sh"><div class="sl">Advertised — Action Required</div><div class="sr"></div></div><div class="g3"><div class="oc"><div class="och amb"><div class="oct">&#128247; Adv — Ready, No Pictures</div><div class="ocn">7</div></div><div class="top5-banner"><span style="font-size:13px">&#11088;</span><span class="top5-label">Today's Top 5 Priority</span></div><div id="s1-top5"></div><div class="rest-banner"><span class="rest-label">Remaining — 2 vehicles</span></div><div id="s1-rest"></div></div><div class="oc"><div class="och orn"><div class="oct">&#9874; Adv — Repair, No Pics</div><div class="ocn">5</div></div><div id="s2"></div></div><div class="oc"><div class="och pur"><div class="oct">&#8987; Adv — Not Arrived</div><div class="ocn">0</div></div><div id="s3"></div></div></div><div class="sh" style="margin-top:14px"><div class="sl">Not Advertised — Action Required</div><div class="sr"></div></div><div class="g3"><div class="oc"><div class="och orn"><div class="oct">&#8679; Ready — Not Advertised</div><div class="ocn">2</div></div><div id="s4"></div></div><div class="oc"><div class="och red"><div class="oct">&#9888; Repair — Not Advertised</div><div class="ocn">9</div></div><div id="s5"></div></div><div class="oc"><div class="och pur"><div class="oct">&#8987; Not Adv — Not Arrived</div><div class="ocn">0</div></div><div id="s6"></div></div></div><div class="sh" style="margin-top:14px"><div class="sl">MOT Alerts</div><div class="sr"></div></div><div class="g2"><div class="oc"><div class="och red"><div class="oct">&#128683; MOT Missed</div><div class="ocn">1</div></div><div id="mot-missed"></div></div><div class="oc"><div class="och amb"><div class="oct">&#9888; MOT Due Soon</div><div class="ocn">3</div></div><div id="mot-soon"></div></div></div><div class="sh" style="margin-top:14px"><div class="sl">Under Deposit</div><div class="sr"></div></div><div class="oc"><div class="och tea"><div class="oct">&#128176; Sold — Under Deposit</div><div class="ocn">10</div></div><div id="s-dep" class="vlist-grid"></div></div><div class="sh" style="margin-top:14px"><div class="sl">Fully Live — Advertised &amp; Pictures Taken</div><div class="sr"></div></div><div class="oc"><div class="och grn"><div class="oct">&#10003; Live on All Platforms</div><div class="ocn">11</div></div><div id="s0" class="vlist-grid"></div></div></div><div class="ov" id="ov" onclick="closePanel()"></div><div class="pn" id="pn"><div class="pn-handle"></div><div class="pnh"><div style="min-width:0;flex:1"><div class="pnt" id="pnT"></div><div class="pns" id="pnS"></div></div><div class="pnc" onclick="closePanel()">&#10005;</div></div><div class="pnb" id="pnB"></div></div>
+<script>
+const VER='20260312';
+const ALL_LIVE=[{"reg": "RX72YSD", "make": "Porsche", "model": "Turbo", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 344, "tier": "critical", "year": 2022, "mileage": 10000, "mot": "", "deposit": false}, {"reg": "KF56 UBC", "make": "Ford", "model": "Galaxy", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 184, "tier": "critical", "year": 2006, "mileage": null, "mot": "", "deposit": false}, {"reg": "AF72 TJZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 120, "tier": "critical", "year": 2022, "mileage": 13000, "mot": "", "deposit": false}, {"reg": "BP74 JNN", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 115, "tier": "critical", "year": 2024, "mileage": 15400, "mot": "", "deposit": false}, {"reg": "BN73 UEH", "make": "Volvo", "model": "Xc40", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 114, "tier": "critical", "year": 2023, "mileage": 6632, "mot": "", "deposit": false}, {"reg": "LB72 MHA", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 100, "tier": "critical", "year": 2022, "mileage": 13000, "mot": "", "deposit": false}, {"reg": "MD73 LBZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 92, "tier": "critical", "year": 2023, "mileage": 12500, "mot": "", "deposit": false}, {"reg": "LG23 VXM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 64, "tier": "slow", "year": 2023, "mileage": 28000, "mot": "MISSED", "deposit": false}, {"reg": "LJ73 CPG", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 59, "tier": "ageing", "year": 2023, "mileage": 6000, "mot": "", "deposit": false}, {"reg": "GN75 UTZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 58, "tier": "ageing", "year": 2025, "mileage": 3000, "mot": "", "deposit": false}, {"reg": "LF73 WKZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 57, "tier": "ageing", "year": 2023, "mileage": 14000, "mot": "", "deposit": false}, {"reg": "LA72 YMX", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 52, "tier": "ageing", "year": 2022, "mileage": 17000, "mot": "", "deposit": false}, {"reg": "LE73 CYC", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 49, "tier": "ageing", "year": 2023, "mileage": 4000, "mot": "", "deposit": false}, {"reg": "LD25 BKZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 45, "tier": "ageing", "year": 2025, "mileage": 9000, "mot": "", "deposit": false}, {"reg": "MJ74 ZNA", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 38, "tier": "ageing", "year": 2024, "mileage": 10000, "mot": "", "deposit": false}, {"reg": "GJ74 ZHV", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 37, "tier": "ageing", "year": 2024, "mileage": 15000, "mot": "", "deposit": false}, {"reg": "MT73 HGO", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 35, "tier": "ageing", "year": 2023, "mileage": 6294, "mot": "", "deposit": false}, {"reg": "MC73 GHD", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 35, "tier": "ageing", "year": 2024, "mileage": 19000, "mot": "", "deposit": false}, {"reg": "LE73 GSZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 34, "tier": "ageing", "year": 2024, "mileage": 28000, "mot": "", "deposit": false}, {"reg": "SH73 RZD", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 34, "tier": "ageing", "year": 2023, "mileage": 7000, "mot": "", "deposit": false}, {"reg": "LF72 WKN", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 31, "tier": "ageing", "year": 2022, "mileage": 12000, "mot": "SOON", "deposit": false}, {"reg": "HJ73 KNN", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 30, "tier": "fresh", "year": 2023, "mileage": 14990, "mot": "", "deposit": false}, {"reg": "SD73 XUA", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 23, "tier": "fresh", "year": 2023, "mileage": 12000, "mot": "", "deposit": false}, {"reg": "MH73 WNP", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 20, "tier": "fresh", "year": 2024, "mileage": 28000, "mot": "", "deposit": false}, {"reg": "MA25 JBX", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 20, "tier": "fresh", "year": 2025, "mileage": 11000, "mot": "", "deposit": false}, {"reg": "SB73 DTK", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 17, "tier": "fresh", "year": 2024, "mileage": 9900, "mot": "", "deposit": false}, {"reg": "AJ23 OVY", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 17, "tier": "fresh", "year": 2023, "mileage": 9900, "mot": "SOON", "deposit": false}, {"reg": "AJ72 RSZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 15, "tier": "fresh", "year": 2022, "mileage": 29000, "mot": "", "deposit": false}, {"reg": "LG24 XGH", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 15, "tier": "fresh", "year": 2024, "mileage": 14900, "mot": "", "deposit": false}, {"reg": "MA23 LUH", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 13, "tier": "fresh", "year": 2023, "mileage": 22000, "mot": "SOON", "deposit": false}, {"reg": "MM72 WCP", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 8, "tier": "fresh", "year": 2022, "mileage": 16000, "mot": "", "deposit": false}, {"reg": "RE20 MEV", "make": "Kia", "model": "Niro", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 8, "tier": "fresh", "year": 2020, "mileage": 35000, "mot": "", "deposit": false}, {"reg": "BC73 KHP", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 7, "tier": "fresh", "year": 2024, "mileage": 11000, "mot": "", "deposit": false}, {"reg": "ND74 KVW", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 3, "tier": "fresh", "year": 2024, "mileage": 19000, "mot": "", "deposit": false}];
+const S0=[{"reg": "RX72YSD", "make": "Porsche", "model": "Turbo", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 344, "tier": "critical", "year": 2022, "mileage": 10000, "mot": "", "deposit": false}, {"reg": "AF72 TJZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 120, "tier": "critical", "year": 2022, "mileage": 13000, "mot": "", "deposit": false}, {"reg": "BP74 JNN", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 115, "tier": "critical", "year": 2024, "mileage": 15400, "mot": "", "deposit": false}, {"reg": "LB72 MHA", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 100, "tier": "critical", "year": 2022, "mileage": 13000, "mot": "", "deposit": false}, {"reg": "MD73 LBZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 92, "tier": "critical", "year": 2023, "mileage": 12500, "mot": "", "deposit": false}, {"reg": "LJ73 CPG", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 59, "tier": "ageing", "year": 2023, "mileage": 6000, "mot": "", "deposit": false}, {"reg": "GN75 UTZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 58, "tier": "ageing", "year": 2025, "mileage": 3000, "mot": "", "deposit": false}, {"reg": "LD25 BKZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 45, "tier": "ageing", "year": 2025, "mileage": 9000, "mot": "", "deposit": false}, {"reg": "MC73 GHD", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 35, "tier": "ageing", "year": 2024, "mileage": 19000, "mot": "", "deposit": false}, {"reg": "SD73 XUA", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 23, "tier": "fresh", "year": 2023, "mileage": 12000, "mot": "", "deposit": false}, {"reg": "RE20 MEV", "make": "Kia", "model": "Niro", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 8, "tier": "fresh", "year": 2020, "mileage": 35000, "mot": "", "deposit": false}];
+const S1_TOP5=[{"reg": "MJ74 ZNA", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 38, "tier": "ageing", "year": 2024, "mileage": 10000, "mot": "", "deposit": false}, {"reg": "LE73 CYC", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 49, "tier": "ageing", "year": 2023, "mileage": 4000, "mot": "", "deposit": false}, {"reg": "LE73 GSZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 34, "tier": "ageing", "year": 2024, "mileage": 28000, "mot": "", "deposit": false}, {"reg": "HJ73 KNN", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 30, "tier": "fresh", "year": 2023, "mileage": 14990, "mot": "", "deposit": false}, {"reg": "AJ23 OVY", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 17, "tier": "fresh", "year": 2023, "mileage": 9900, "mot": "SOON", "deposit": false}];
+const S1_REST=[{"reg": "LA72 YMX", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 52, "tier": "ageing", "year": 2022, "mileage": 17000, "mot": "", "deposit": false}, {"reg": "AJ72 RSZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 15, "tier": "fresh", "year": 2022, "mileage": 29000, "mot": "", "deposit": false}];
+const S1_ALL=[...S1_TOP5,...S1_REST];
+const S2=[{"reg": "LF73 WKZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 57, "tier": "ageing", "year": 2023, "mileage": 14000, "mot": "", "deposit": false}, {"reg": "SH73 RZD", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 34, "tier": "ageing", "year": 2023, "mileage": 7000, "mot": "", "deposit": false}, {"reg": "SB73 DTK", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 17, "tier": "fresh", "year": 2024, "mileage": 9900, "mot": "", "deposit": false}, {"reg": "LG24 XGH", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 15, "tier": "fresh", "year": 2024, "mileage": 14900, "mot": "", "deposit": false}, {"reg": "BC73 KHP", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 7, "tier": "fresh", "year": 2024, "mileage": 11000, "mot": "", "deposit": false}];
+const S3=[];
+const S4=[{"reg": "KF56 UBC", "make": "Ford", "model": "Galaxy", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 184, "tier": "critical", "year": 2006, "mileage": null, "mot": "", "deposit": false}, {"reg": "MH73 WNP", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 20, "tier": "fresh", "year": 2024, "mileage": 28000, "mot": "", "deposit": false}];
+const S5=[{"reg": "BN73 UEH", "make": "Volvo", "model": "Xc40", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 114, "tier": "critical", "year": 2023, "mileage": 6632, "mot": "", "deposit": false}, {"reg": "LG23 VXM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 64, "tier": "slow", "year": 2023, "mileage": 28000, "mot": "MISSED", "deposit": false}, {"reg": "GJ74 ZHV", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 37, "tier": "ageing", "year": 2024, "mileage": 15000, "mot": "", "deposit": false}, {"reg": "MT73 HGO", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 35, "tier": "ageing", "year": 2023, "mileage": 6294, "mot": "", "deposit": false}, {"reg": "LF72 WKN", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 31, "tier": "ageing", "year": 2022, "mileage": 12000, "mot": "SOON", "deposit": false}, {"reg": "MA25 JBX", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 20, "tier": "fresh", "year": 2025, "mileage": 11000, "mot": "", "deposit": false}, {"reg": "MA23 LUH", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 13, "tier": "fresh", "year": 2023, "mileage": 22000, "mot": "SOON", "deposit": false}, {"reg": "MM72 WCP", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 8, "tier": "fresh", "year": 2022, "mileage": 16000, "mot": "", "deposit": false}, {"reg": "ND74 KVW", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 3, "tier": "fresh", "year": 2024, "mileage": 19000, "mot": "", "deposit": false}];
+const S6=[];
+const S_DEP=[{"reg": "BL74 EZU", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 104, "tier": "critical", "year": 2024, "mileage": 14980, "mot": "", "deposit": true}, {"reg": "LB73 AHV", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 100, "tier": "critical", "year": 2023, "mileage": 15000, "mot": "", "deposit": true}, {"reg": "PJ25 RJV", "make": "Peugeot", "model": "E -5008", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 94, "tier": "critical", "year": 2025, "mileage": 3000, "mot": "", "deposit": true}, {"reg": "MT73 UGC", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 87, "tier": "slow", "year": 2023, "mileage": 13700, "mot": "", "deposit": true}, {"reg": "SH72 FZG", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 71, "tier": "slow", "year": 2022, "mileage": 17000, "mot": "", "deposit": true}, {"reg": "LA74 KKB", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 63, "tier": "slow", "year": 2024, "mileage": null, "mot": "", "deposit": true}, {"reg": "WR74 MGU", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 38, "tier": "ageing", "year": 2024, "mileage": 14500, "mot": "", "deposit": true}, {"reg": "KD59 SEV", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 28, "tier": "fresh", "year": 2023, "mileage": 25000, "mot": "", "deposit": true}, {"reg": "WU25 BNB", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 21, "tier": "fresh", "year": 2025, "mileage": 3000, "mot": "", "deposit": true}, {"reg": "HG25 FZX", "make": "Tesla", "model": "3 Rwd", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 13, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "deposit": true}];
+const S_MOT_MISSED=[{"reg": "LG23 VXM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 64, "tier": "slow", "year": 2023, "mileage": 28000, "mot": "MISSED", "deposit": false}];
+const S_MOT_SOON=[{"reg": "LF72 WKN", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 31, "tier": "ageing", "year": 2022, "mileage": 12000, "mot": "SOON", "deposit": false}, {"reg": "AJ23 OVY", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 17, "tier": "fresh", "year": 2023, "mileage": 9900, "mot": "SOON", "deposit": false}, {"reg": "MA23 LUH", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": true, "age": 13, "tier": "fresh", "year": 2023, "mileage": 22000, "mot": "SOON", "deposit": false}];
+
+/* ── PWA: Service Worker registration ── */
+if ('serviceWorker' in navigator) {
+  const swBlob = new Blob([`
+const CACHE = 'icknox-v20260312';
+const URLS  = [self.location.href || '/'];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(URLS)).then(() => self.skipWaiting()));
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys =>
+    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+  ).then(() => self.clients.claim()));
+});
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    caches.open(CACHE).then(async cache => {
+      const cached = await cache.match(e.request);
+      const fetchPromise = fetch(e.request).then(resp => {
+        if (resp.ok) cache.put(e.request, resp.clone());
+        return resp;
+      }).catch(() => null);
+      return cached || await fetchPromise;
+    })
+  );
+});
+`], {type:'application/javascript'});
+  const swUrl  = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl, {scope: './'}).then(reg => {
+    reg.addEventListener('updatefound', () => {
+      const newSW = reg.installing;
+      newSW.addEventListener('statechange', () => {
+        if (newSW.state === 'activated') showToast('\u2713 Dashboard updated \u2014 reload for latest data');
+      });
+    });
+  }).catch(() => {});
+}
+
+/* ── PWA: Install prompt ── */
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const banner = document.getElementById('install-banner');
+  if (banner && !localStorage.getItem('ib-dismissed')) banner.style.display = 'flex';
+});
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => { deferredPrompt = null; dismissInstall(); });
+}
+function dismissInstall() {
+  const b = document.getElementById('install-banner');
+  if (b) b.style.display = 'none';
+  try { localStorage.setItem('ib-dismissed','1'); } catch(e){}
+}
+
+/* ── Auto-refresh: check for new version every 5 minutes ── */
+function checkForUpdate() {
+  fetch(location.href + '?nocache=' + Date.now(), {cache:'no-store'})
+    .then(r => r.text())
+    .then(html => {
+      const m = html.match(/const VER='([^']+)'/);
+      if (m && m[1] !== VER) {
+        showToast('\u21bb New data available \u2014 refreshing\u2026');
+        setTimeout(() => location.reload(true), 2000);
+      }
+    }).catch(() => {});
+}
+setInterval(checkForUpdate, 5 * 60 * 1000); // every 5 min
+
+function showToast(msg) {
+  const t = document.getElementById('update-toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+/* ── Dashboard logic ── */
+const TIERS = {fresh:'Fresh', ageing:'Ageing', slow:'Slow', critical:'Critical'};
+const motData = {};
+
+function tier(a) { return a<=30?'fresh':a<=60?'ageing':a<=90?'slow':'critical'; }
+function tc(t)   { return t==='fresh'?'var(--fresh)':t==='ageing'?'var(--ageing)':t==='slow'?'var(--slow)':'var(--critical)'; }
+
+function ukYear(reg) {
+  const r = reg.replace(/\s+/g,'').toUpperCase();
+  if (r.length < 4) return null;
+  const c = parseInt(r.substring(2,4));
+  if (c>=2  && c<=50) return 2000+c;
+  if (c>=52 && c<=99) return 2000+(c-50);
+  return null;
+}
+function yrBadge(reg) {
+  const yr = ukYear(reg); if (!yr) return '';
+  if (yr >= 2025) return '<span class="badge b-yr25">'+yr+'</span>';
+  if (yr >= 2024) return '<span class="badge b-yr24">'+yr+'</span>';
+  return '<span class="badge" style="background:#f8fafc;color:var(--text3);border:1px solid var(--border)">'+yr+'</span>';
+}
+
+function getMot(r) { return motData[r] || {status:'',note:''}; }
+function setMot(r,k,v) { if (!motData[r]) motData[r]={status:'',note:''}; motData[r][k]=v; }
+
+function vrow(v, opts) {
+  opts = opts || {};
+  const t    = tier(v.age);
+  const meta = v.mileage ? v.mileage.toLocaleString()+'mi' : '\u2014';
+  const motB = v.mot==='MISSED' ? '<span class="badge b-missed">MOT</span>'
+             : v.mot==='SOON'   ? '<span class="badge b-soon">MOT Soon</span>' : '';
+  const depB = v.deposit ? '<span class="badge b-dep">Dep</span>' : '';
+  const numB = opts.num != null ? '<div class="b-num">'+opts.num+'</div>' : '';
+  const cls  = opts.priority ? 'vr priority' : opts.deposit ? 'vr dep-highlight' : 'vr';
+  return '<div class="'+cls+'" data-v="'+encodeURIComponent(JSON.stringify(v))+'" onclick="openDetailEl(this)">'
+    + numB
+    + '<span class="vreg">'+v.reg+'</span>'
+    + '<div class="vi"><div class="vn">'+v.make+' '+v.model+'</div>'
+    + '<div class="vm">'+meta+'</div></div>'
+    + yrBadge(v.reg) + motB + depB
+    + '<span class="vage '+t+'">'+v.age+'d</span></div>';
+}
+
+function openDetailEl(el) { openDetail(JSON.parse(decodeURIComponent(el.getAttribute('data-v')))); }
+
+function openDetail(v) {
+  const t  = tier(v.age), yr = ukYear(v.reg);
+  const ac = v.adv==='Advertised' ? 'adv' : 'unadv';
+  const pc = v.prep==='READY' ? 'ready' : 'repair';
+  const pl = v.prep==='READY' ? 'Ready' : 'Need Repair';
+  const sc = v.status==='ARRIVED' ? 'arrived' : 'notarr';
+  const sl = v.status==='ARRIVED' ? 'Arrived' : 'Not Arrived';
+  const xc = v.pics ? 'pics' : 'nopics';
+  const xl = v.pics ? 'Pictures Taken' : 'No Pictures';
+  const mt = v.mot==='MISSED' ? '<span class="dtag motbad">MOT Missed</span>'
+           : v.mot==='SOON'   ? '<span class="dtag motsoon">MOT Due Soon</span>' : '';
+  const dep = v.deposit ? '<span class="dtag dep">Under Deposit</span>' : '';
+  document.getElementById('pnT').textContent = v.reg;
+  document.getElementById('pnS').textContent = v.make+' '+v.model;
+  document.getElementById('pnB').innerHTML =
+    '<div class="ds"><div class="dreg">'+v.reg+'</div>'
+    +'<div class="dname">'+v.make+' '+v.model+'</div>'
+    +'<div class="dtags">'
+      +'<span class="dtag '+ac+'">'+v.adv+'</span>'
+      +'<span class="dtag '+pc+'">'+pl+'</span>'
+      +'<span class="dtag '+sc+'">'+sl+'</span>'
+      +'<span class="dtag '+xc+'">'+xl+'</span>'
+      +'<span class="dtag '+t+'">'+TIERS[t]+'</span>'+mt+dep
+    +'</div></div>'
+    +'<div class="ds"><div class="dl">Vehicle Details</div><div class="dg">'
+      +'<div class="di"><div class="dil">Age in Stock</div><div class="dv" style="color:'+tc(t)+'">'+v.age+' days</div></div>'
+      +'<div class="di"><div class="dil">Reg Year</div><div class="dv">'+(yr||'\u2014')+'</div></div>'
+      +'<div class="di"><div class="dil">Year</div><div class="dv">'+(v.year||'\u2014')+'</div></div>'
+      +'<div class="di"><div class="dil">Mileage</div><div class="dv">'+(v.mileage?v.mileage.toLocaleString()+' mi':'\u2014')+'</div></div>'
+    +'</div></div>';
+  openP();
+}
+
+function motRow(v, type) {
+  const d    = getMot(v.reg);
+  const bCls = type==='missed' ? 'mot-missed-badge' : 'mot-soon-badge';
+  const lbl  = type==='missed' ? 'MISSED' : 'SOON';
+  const enc  = encodeURIComponent(JSON.stringify(v));
+  const btns = ['Pending','Booked','Done'].map(s => {
+    const a = d.status===s ? 'active '+s.toLowerCase() : '';
+    return '<button class="msb '+a+'" data-reg="'+v.reg+'" data-status="'+s
+          +'" onclick="event.stopPropagation();setMotStatusBtn(this)">'+s+'</button>';
+  }).join('');
+  return '<div class="mot-row">'
+    +'<div style="flex-shrink:0;min-width:60px"><span class="mot-date-badge '+bCls+'">'+lbl+'</span></div>'
+    +'<div class="vi">'
+      +'<div class="vn" style="cursor:pointer" data-v="'+enc+'" onclick="openDetailEl(this)">'+v.reg+' \u2014 '+v.make+' '+v.model+'</div>'
+      +'<div class="mot-comment" onclick="event.stopPropagation()">'
+        +'<input type="text" placeholder="Add note\u2026" data-reg="'+v.reg+'" value="'+d.note+'"'
+        +' oninput="setMot(this.dataset.reg,\'note\',this.value)">'
+        +'<div class="mot-status-btns">'+btns+'</div>'
+      +'</div>'
+    +'</div>'
+    +'<span class="vage '+tier(v.age)+'">'+v.age+'d</span></div>';
+}
+
+function setMotStatusBtn(btn) {
+  const reg=btn.dataset.reg, status=btn.dataset.status;
+  const d=getMot(reg), ns=d.status===status?'':status;
+  setMot(reg,'status',ns);
+  btn.closest('.mot-row').querySelectorAll('.msb').forEach(b => {
+    b.className='msb'; if (b.dataset.status===ns) b.className='msb active '+ns.toLowerCase();
+  });
+}
+
+function renderList(id, arr, opts) {
+  opts = opts || {};
+  const el = document.getElementById(id); if (!el) return;
+  el.innerHTML = arr.length
+    ? arr.map((v,i) => vrow(v, Object.assign({},opts,{num:opts.numbered?i+1:null}))).join('')
+    : '<div class="emp">\u2713 None \u2014 all clear</div>';
+}
+function renderMotList(id, arr, type) {
+  const el = document.getElementById(id); if (!el) return;
+  el.innerHTML = arr.length
+    ? arr.map(v => motRow(v,type)).join('')
+    : '<div class="emp">\u2713 No alerts</div>';
+}
+function openSection(title, arr) {
+  document.getElementById('pnT').textContent = title;
+  document.getElementById('pnS').textContent = arr.length+' vehicle'+(arr.length!==1?'s':'');
+  document.getElementById('pnB').innerHTML = arr.length
+    ? arr.map((v,i) => vrow(v,{num:i+1})).join('')
+    : '<div class="emp" style="padding:40px">\u2713 None</div>';
+  openP();
+}
+function openP()    { document.getElementById('ov').classList.add('open'); document.getElementById('pn').classList.add('open'); }
+function closePanel(){ document.getElementById('ov').classList.remove('open'); document.getElementById('pn').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key==='Escape') closePanel(); });
+
+/* ── Render all sections ── */
+renderList('s0', S0);
+(function(){
+  const e5 = document.getElementById('s1-top5');
+  const eR = document.getElementById('s1-rest');
+  if (e5) e5.innerHTML = S1_TOP5.length
+    ? S1_TOP5.map((v,i)=>vrow(v,{priority:true,num:i+1})).join('')
+    : '<div class="emp">\u2713 None</div>';
+  if (eR) eR.innerHTML = S1_REST.length
+    ? S1_REST.map(v=>vrow(v)).join('')
+    : '<div class="emp">\u2713 None</div>';
+})();
+renderList('s2',S2); renderList('s3',S3); renderList('s4',S4);
+renderList('s5',S5); renderList('s6',S6);
+renderList('s-dep', S_DEP, {deposit:true});
+renderMotList('mot-missed', S_MOT_MISSED, 'missed');
+renderMotList('mot-soon',   S_MOT_SOON,   'soon');
+
+</script>
+</body>
+</html>
