@@ -9,7 +9,6 @@
 <meta name="apple-mobile-web-app-title" content="ICKNOX">
 <meta name="theme-color" content="#0f1117">
 <meta name="description" content="ICKNOX Operations Dashboard">
-<!-- PWA manifest embedded inline -->
 <link rel="manifest" href="data:application/json,{%22name%22:%22ICKNOX%20Operations%20Dashboard%22,%22short_name%22:%22ICKNOX%22,%22start_url%22:%22./%22,%22display%22:%22standalone%22,%22background_color%22:%22%230f1117%22,%22theme_color%22:%22%230f1117%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns%3D'http://www.w3.org/2000/svg'%20viewBox%3D'0%200%20192%20192'%3E%3Crect%20width%3D'192'%20height%3D'192'%20rx%3D'32'%20fill%3D'%230f1117'/%3E%3Ctext%20x%3D'96'%20y%3D'130'%20font-size%3D'96'%20text-anchor%3D'middle'%20fill%3D'white'%20font-weight%3D'bold'%20font-family%3D'Arial'%3EI%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
 <title>ICKNOX — Operations Dashboard</title>
 <style>
@@ -32,8 +31,6 @@ body {
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
   font-size:13px; line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden;
 }
-
-/* ── HEADER ── */
 .hd {
   background:#0f1117; padding:0 16px; height:54px;
   display:flex; align-items:center; justify-content:space-between;
@@ -45,8 +42,6 @@ body {
 .hdiv { width:1px; height:16px; background:rgba(255,255,255,.15); flex-shrink:0 }
 .hsub { font-size:11px; color:rgba(255,255,255,.4); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
 .hdate { font-size:10px; color:rgba(255,255,255,.3); flex-shrink:0; margin-left:6px; white-space:nowrap }
-
-/* update toast */
 .toast {
   position:fixed; bottom:calc(16px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%) translateY(80px);
   background:#0f1117; color:#fff; font-size:12px; font-weight:600;
@@ -54,8 +49,6 @@ body {
   box-shadow:0 4px 20px rgba(0,0,0,.3); transition:transform .3s ease; white-space:nowrap;
 }
 .toast.show { transform:translateX(-50%) translateY(0) }
-
-/* install banner */
 .install-banner {
   background:var(--accent); color:#fff; padding:10px 16px;
   display:flex; align-items:center; justify-content:space-between; gap:10px;
@@ -66,17 +59,11 @@ body {
   padding:5px 12px; font-size:11px; font-weight:700; cursor:pointer; flex-shrink:0;
 }
 .install-banner .ib-close { background:transparent; color:rgba(255,255,255,.7); font-size:18px; padding:0 4px }
-
-/* ── MAIN ── */
 .main { padding:14px 12px 80px; max-width:1600px; margin:0 auto }
-
-/* ── SECTION HEADER ── */
 .sh { display:flex; align-items:center; gap:8px; margin-bottom:10px; margin-top:22px }
 .sh:first-child { margin-top:0 }
 .sl { font-size:9px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:var(--text3); white-space:nowrap }
 .sr { flex:1; height:1px; background:var(--border) }
-
-/* ── KPI GRID ── */
 .kg { display:grid; grid-template-columns:repeat(3,1fr); gap:7px }
 .kpi {
   background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
@@ -100,14 +87,10 @@ body {
 .c-amber{color:var(--ageing)} .c-purple{color:var(--purple)} .c-orange{color:var(--slow)}
 .c-teal{color:var(--teal)} .c-gold{color:var(--gold)}
 .ksub { font-size:8px; color:var(--text3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
-
-/* ── GRIDS ── */
 .g3 { display:grid; grid-template-columns:1fr; gap:10px }
 .g2 { display:grid; grid-template-columns:1fr 1fr; gap:10px }
 .vlist-grid { display:grid; grid-template-columns:1fr }
 .vlist-grid .vr { border-bottom:1px solid var(--border) !important }
-
-/* ── OPERATION CARDS ── */
 .oc { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden }
 .och { padding:10px 13px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border) }
 .och.red{background:var(--critical-bg);border-bottom-color:var(--critical-b)}
@@ -123,8 +106,6 @@ body {
 .ocn { font-size:20px; font-weight:800; flex-shrink:0; letter-spacing:-0.5px }
 .och.red .ocn{color:var(--critical)} .och.amb .ocn{color:var(--ageing)} .och.orn .ocn{color:var(--slow)}
 .och.grn .ocn{color:var(--fresh)} .och.pur .ocn{color:var(--purple)} .och.tea .ocn{color:var(--teal)} .och.gld .ocn{color:var(--gold)}
-
-/* ── VEHICLE ROW ── */
 .vr {
   display:flex; align-items:center; padding:9px 13px;
   border-bottom:1px solid var(--border); gap:7px;
@@ -144,8 +125,6 @@ body {
 .vage { font-size:15px; font-weight:800; min-width:34px; text-align:right; flex-shrink:0; letter-spacing:-0.5px }
 .vage.fresh{color:var(--fresh)} .vage.ageing{color:var(--ageing)} .vage.slow{color:var(--slow)} .vage.critical{color:var(--critical)}
 .emp { padding:18px 13px; text-align:center; color:var(--text3); font-size:11px }
-
-/* ── BADGES ── */
 .badge { font-size:8px; font-weight:700; padding:2px 5px; border-radius:7px; text-transform:uppercase; letter-spacing:.2px; flex-shrink:0; white-space:nowrap }
 .b-missed{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
 .b-soon{background:#fefce8;color:#ca8a04;border:1px solid #fde047}
@@ -156,20 +135,24 @@ body {
 .vr.priority { background:linear-gradient(90deg,#fffbeb,#fff); border-left:3px solid var(--gold) }
 .vr.priority:active { background:linear-gradient(90deg,#fef3c7,var(--bg)) }
 .vr.dep-highlight { background:linear-gradient(90deg,#f5f3ff,#fff); border-left:3px solid var(--purple) }
-
-/* banners */
 .top5-banner { background:var(--gold-bg); border-bottom:1px solid var(--gold-b); padding:6px 13px; display:flex; align-items:center; gap:6px }
 .top5-label { font-size:9px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:.7px }
 .rest-banner { background:var(--bg); border-bottom:1px solid var(--border); padding:5px 13px }
 .rest-label { font-size:9px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:.7px }
 
-/* ── MOT ── */
+/* ── MOT ALERT ROWS ── */
 .mot-row { display:flex; align-items:flex-start; padding:10px 13px; border-bottom:1px solid var(--border); gap:9px; transition:background .1s }
 .mot-row:last-child { border-bottom:none }
 .mot-row:active { background:var(--bg) }
-.mot-date-badge { font-size:8px; font-weight:700; padding:2px 7px; border-radius:5px; flex-shrink:0; white-space:nowrap; margin-top:2px }
-.mot-missed-badge{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
-.mot-soon-badge{background:#fefce8;color:#ca8a04;border:1px solid #fde047}
+/* Date badge — larger and more prominent than before */
+.mot-date-col { display:flex; flex-direction:column; align-items:center; gap:3px; flex-shrink:0; min-width:72px }
+.mot-status-badge { font-size:8px; font-weight:800; padding:2px 7px; border-radius:4px; text-transform:uppercase; letter-spacing:.5px; white-space:nowrap }
+.mot-missed-badge { background:#fef2f2; color:#dc2626; border:1px solid #fca5a5 }
+.mot-soon-badge   { background:#fefce8; color:#ca8a04; border:1px solid #fde047 }
+/* The actual date — this is the key new element */
+.mot-expiry-date { font-size:13px; font-weight:800; letter-spacing:-0.3px; white-space:nowrap }
+.mot-missed-date { color:#dc2626 }
+.mot-soon-date   { color:#ca8a04 }
 .mot-comment { margin-top:5px }
 .mot-comment input {
   width:100%; border:1px solid var(--border); border-radius:5px;
@@ -187,13 +170,8 @@ body {
 .msb.active.pending{background:#fefce8;color:#ca8a04;border-color:#fde047}
 .msb.active.booked{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-b)}
 .msb.active.done{background:var(--fresh-bg);color:var(--fresh);border-color:var(--fresh-b)}
-
-/* ── OVERLAY ── */
 .ov { position:fixed; inset:0; background:rgba(15,17,23,.5); backdrop-filter:blur(2px); z-index:100; opacity:0; pointer-events:none; transition:opacity .25s }
 .ov.open { opacity:1; pointer-events:all }
-
-/* ── SLIDE PANEL ── */
-/* Mobile: sheet slides up from bottom */
 .pn {
   position:fixed; right:0; bottom:0; width:100%; max-height:92vh;
   background:var(--surface); border-top:1px solid var(--border);
@@ -205,15 +183,12 @@ body {
   padding-bottom:env(safe-area-inset-bottom);
 }
 .pn.open { transform:translateY(0) }
-/* drag handle */
 .pn-handle { width:36px; height:4px; background:var(--border2); border-radius:2px; margin:10px auto 0; flex-shrink:0 }
 .pnh { padding:10px 16px 12px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between; flex-shrink:0 }
 .pnt { font-size:14px; font-weight:700; margin-bottom:2px }
 .pns { font-size:10px; color:var(--text3) }
 .pnc { width:30px; height:30px; min-width:30px; border-radius:6px; background:var(--bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px; color:var(--text2); touch-action:manipulation }
 .pnb { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain }
-
-/* ── DETAIL PANEL ── */
 .ds { padding:13px 15px; border-bottom:1px solid var(--border) } .ds:last-child { border-bottom:none }
 .dl { font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text3); margin-bottom:8px }
 .dg { display:grid; grid-template-columns:1fr 1fr; gap:7px }
@@ -238,16 +213,32 @@ body {
 .dtag.critical{background:var(--critical-bg);color:var(--critical);border:1px solid var(--critical-b)}
 .dtag.motbad{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
 .dtag.motsoon{background:#fefce8;color:#ca8a04;border:1px solid #fde047}
+.dtag.motok{background:var(--fresh-bg);color:var(--fresh);border:1px solid var(--fresh-b)}
 .dtag.dep{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-b)}
+/* MOT date box in detail panel */
+.mot-detail-box { background:var(--bg); border:1px solid var(--border); border-radius:7px; padding:9px 11px }
+.mot-detail-box.missed { background:#fef2f2; border-color:#fca5a5 }
+.mot-detail-box.soon   { background:#fefce8; border-color:#fde047 }
+.mot-detail-box.ok     { background:var(--fresh-bg); border-color:var(--fresh-b) }
+.mot-detail-label { font-size:9px; color:var(--text3); text-transform:uppercase; letter-spacing:.4px; margin-bottom:3px }
+.mot-detail-box.missed .mot-detail-label { color:#dc2626 }
+.mot-detail-box.soon   .mot-detail-label { color:#ca8a04 }
+.mot-detail-box.ok     .mot-detail-label { color:var(--fresh) }
+.mot-detail-date { font-size:16px; font-weight:800; letter-spacing:-0.5px }
+.mot-detail-box.missed .mot-detail-date { color:#dc2626 }
+.mot-detail-box.soon   .mot-detail-date { color:#ca8a04 }
+.mot-detail-box.ok     .mot-detail-date { color:var(--fresh) }
+.mot-detail-status { font-size:9px; font-weight:700; margin-top:2px; text-transform:uppercase; letter-spacing:.4px }
+.mot-detail-box.missed .mot-detail-status { color:#dc2626 }
+.mot-detail-box.soon   .mot-detail-status { color:#ca8a04 }
+.mot-detail-box.ok     .mot-detail-status { color:var(--fresh) }
 
-/* ── RESPONSIVE BREAKPOINTS ── */
 @media (min-width:600px) {
   .main { padding:20px 20px 70px }
   .hd  { padding:0 24px }
   .kg  { grid-template-columns:repeat(3,1fr) }
   .kv  { font-size:28px }
   .vlist-grid { grid-template-columns:1fr 1fr }
-  /* desktop panel slides in from right */
   .pn { top:0; right:0; bottom:0; left:auto; width:var(--panel-w); max-height:none; border-radius:0; border-top:none; border-left:1px solid var(--border); transform:translateX(100%); padding-bottom:0 }
   .pn.open { transform:translateX(0) }
   .pn-handle { display:none }
@@ -269,31 +260,36 @@ body {
 @media (min-width:1400px) {
   .kg { grid-template-columns:repeat(9,1fr) }
 }
+@media print {
+  .toast, .install-banner, .ov, .pn, .pn-handle { display:none !important }
+  .hd { position:static }
+  .main { padding:10px }
+  .vr:active { background:none }
+}
 
 </style>
 </head>
 <body>
-<div id="install-banner" class="install-banner" style="display:none"><span>&#128241; Install ICKNOX Dashboard as an app</span><div style="display:flex;gap:6px"><button onclick="installApp()">Install</button><button class="ib-close" onclick="dismissInstall()">&#10005;</button></div></div><div class="hd"><div class="hl"><div class="logo">ICKNOX</div><div class="hdiv"></div><div class="hsub">Operations Dashboard</div></div><div class="hdate" id="hdate">30 March 2026</div></div><div id="update-toast" class="toast">&#10003; Dashboard updated</div><div class="main"><div class="sh"><div class="sl">Summary</div><div class="sr"></div></div><div class="kg"><div class="kpi" onclick="openSection('All Live Stock',ALL_LIVE)"><div class="ks s-blue"></div><div class="kl">Live Stock</div><div class="kv c-blue">30</div><div class="ksub">Tap to view all</div></div><div class="kpi nc"><div class="ks s-green"></div><div class="kl">Fully Live</div><div class="kv c-green">7</div><div class="ksub">Adv + pics</div></div><div class="kpi" onclick="openSection('Adv — Ready, No Pics',S1_ALL)"><div class="ks s-amber"></div><div class="kl">Adv Ready No Pics</div><div class="kv c-amber">7</div><div class="ksub">5 priority</div></div><div class="kpi" onclick="openSection('Adv — Repair, No Pics',S2)"><div class="ks s-orange"></div><div class="kl">Adv Repair No Pics</div><div class="kv c-orange">1</div><div class="ksub">In repair, live</div></div><div class="kpi" onclick="openSection('Adv — Not Arrived',S3)"><div class="ks s-purple"></div><div class="kl">Adv Not Arrived</div><div class="kv c-purple">4</div><div class="ksub">Not on site</div></div><div class="kpi" onclick="openSection('Ready — Not Advertised',S4)"><div class="ks s-orange"></div><div class="kl">Ready Not Adv</div><div class="kv c-orange">3</div><div class="ksub">Can go live</div></div><div class="kpi" onclick="openSection('Repair — Not Advertised',S5)"><div class="ks s-red"></div><div class="kl">Repair Not Adv</div><div class="kv c-red">6</div><div class="ksub">Blocking ads</div></div><div class="kpi" onclick="openSection('Not Adv — Not Arrived',S6)"><div class="ks s-purple"></div><div class="kl">Not Adv Not Arr</div><div class="kv c-purple">2</div><div class="ksub">Awaiting</div></div><div class="kpi" onclick="openSection('Under Deposit',S_DEP)"><div class="ks s-teal"></div><div class="kl">Under Deposit</div><div class="kv c-teal">8</div><div class="ksub">Sold, pending</div></div></div><div class="sh"><div class="sl">Advertised — Action Required</div><div class="sr"></div></div><div class="g3"><div class="oc"><div class="och amb"><div class="oct">&#128247; Adv — Ready, No Pictures</div><div class="ocn">7</div></div><div class="top5-banner"><span style="font-size:13px">&#11088;</span><span class="top5-label">Today's Top 5 Priority</span></div><div id="s1-top5"></div><div class="rest-banner"><span class="rest-label">Remaining — 2 vehicles</span></div><div id="s1-rest"></div></div><div class="oc"><div class="och orn"><div class="oct">&#9874; Adv — Repair, No Pics</div><div class="ocn">1</div></div><div id="s2"></div></div><div class="oc"><div class="och pur"><div class="oct">&#8987; Adv — Not Arrived</div><div class="ocn">4</div></div><div id="s3"></div></div></div><div class="sh" style="margin-top:14px"><div class="sl">Not Advertised — Action Required</div><div class="sr"></div></div><div class="g3"><div class="oc"><div class="och orn"><div class="oct">&#8679; Ready — Not Advertised</div><div class="ocn">3</div></div><div id="s4"></div></div><div class="oc"><div class="och red"><div class="oct">&#9888; Repair — Not Advertised</div><div class="ocn">6</div></div><div id="s5"></div></div><div class="oc"><div class="och pur"><div class="oct">&#8987; Not Adv — Not Arrived</div><div class="ocn">2</div></div><div id="s6"></div></div></div><div class="sh" style="margin-top:14px"><div class="sl">MOT Alerts</div><div class="sr"></div></div><div class="g2"><div class="oc"><div class="och red"><div class="oct">&#128683; MOT Missed</div><div class="ocn">1</div></div><div id="mot-missed"></div></div><div class="oc"><div class="och amb"><div class="oct">&#9888; MOT Due Soon</div><div class="ocn">3</div></div><div id="mot-soon"></div></div></div><div class="sh" style="margin-top:14px"><div class="sl">Under Deposit</div><div class="sr"></div></div><div class="oc"><div class="och tea"><div class="oct">&#128176; Sold — Under Deposit</div><div class="ocn">8</div></div><div id="s-dep" class="vlist-grid"></div></div><div class="sh" style="margin-top:14px"><div class="sl">Fully Live — Advertised &amp; Pictures Taken</div><div class="sr"></div></div><div class="oc"><div class="och grn"><div class="oct">&#10003; Live on All Platforms</div><div class="ocn">7</div></div><div id="s0" class="vlist-grid"></div></div></div><div class="ov" id="ov" onclick="closePanel()"></div><div class="pn" id="pn"><div class="pn-handle"></div><div class="pnh"><div style="min-width:0;flex:1"><div class="pnt" id="pnT"></div><div class="pns" id="pnS"></div></div><div class="pnc" onclick="closePanel()">&#10005;</div></div><div class="pnb" id="pnB"></div></div>
+<div id="install-banner" class="install-banner" style="display:none"><span>&#128241; Install ICKNOX Dashboard as an app</span><div style="display:flex;gap:6px"><button onclick="installApp()">Install</button><button class="ib-close" onclick="dismissInstall()">&#10005;</button></div></div><div class="hd"><div class="hl"><div class="logo">ICKNOX</div><div class="hdiv"></div><div class="hsub">Operations Dashboard</div></div><div class="hdate" id="hdate">31 March 2026</div></div><div id="update-toast" class="toast">&#10003; Dashboard updated</div><div class="main"><div class="sh"><div class="sl">Summary</div><div class="sr"></div></div><div class="kg"><div class="kpi" onclick="openSection('All Live Stock',ALL_LIVE)"><div class="ks s-blue"></div><div class="kl">Live Stock</div><div class="kv c-blue">32</div><div class="ksub">Tap to view all</div></div><div class="kpi nc"><div class="ks s-green"></div><div class="kl">Fully Live</div><div class="kv c-green">7</div><div class="ksub">Adv + pics</div></div><div class="kpi" onclick="openSection('Adv — Ready, No Pics',S1_ALL)"><div class="ks s-amber"></div><div class="kl">Adv Ready No Pics</div><div class="kv c-amber">6</div><div class="ksub">5 priority</div></div><div class="kpi" onclick="openSection('Adv — Repair, No Pics',S2)"><div class="ks s-orange"></div><div class="kl">Adv Repair No Pics</div><div class="kv c-orange">4</div><div class="ksub">In repair, live</div></div><div class="kpi" onclick="openSection('Adv — Not Arrived',S3)"><div class="ks s-purple"></div><div class="kl">Adv Not Arrived</div><div class="kv c-purple">4</div><div class="ksub">Not on site</div></div><div class="kpi" onclick="openSection('Ready — Not Advertised',S4)"><div class="ks s-orange"></div><div class="kl">Ready Not Adv</div><div class="kv c-orange">3</div><div class="ksub">Can go live</div></div><div class="kpi" onclick="openSection('Repair — Not Advertised',S5)"><div class="ks s-red"></div><div class="kl">Repair Not Adv</div><div class="kv c-red">5</div><div class="ksub">Blocking ads</div></div><div class="kpi" onclick="openSection('Not Adv — Not Arrived',S6)"><div class="ks s-purple"></div><div class="kl">Not Adv Not Arr</div><div class="kv c-purple">3</div><div class="ksub">Awaiting</div></div><div class="kpi" onclick="openSection('Under Deposit',S_DEP)"><div class="ks s-teal"></div><div class="kl">Under Deposit</div><div class="kv c-teal">6</div><div class="ksub">Sold, pending</div></div></div><div class="sh"><div class="sl">Advertised — Action Required</div><div class="sr"></div></div><div class="g3"><div class="oc"><div class="och amb"><div class="oct">&#128247; Adv — Ready, No Pictures</div><div class="ocn">6</div></div><div class="top5-banner"><span style="font-size:13px">&#11088;</span><span class="top5-label">Today's Top 5 Priority</span></div><div id="s1-top5"></div><div class="rest-banner"><span class="rest-label">Remaining — 1 vehicles</span></div><div id="s1-rest"></div></div><div class="oc"><div class="och orn"><div class="oct">&#9874; Adv — Repair, No Pics</div><div class="ocn">4</div></div><div id="s2"></div></div><div class="oc"><div class="och pur"><div class="oct">&#8987; Adv — Not Arrived</div><div class="ocn">4</div></div><div id="s3"></div></div></div><div class="sh" style="margin-top:14px"><div class="sl">Not Advertised — Action Required</div><div class="sr"></div></div><div class="g3"><div class="oc"><div class="och orn"><div class="oct">&#8679; Ready — Not Advertised</div><div class="ocn">3</div></div><div id="s4"></div></div><div class="oc"><div class="och red"><div class="oct">&#9888; Repair — Not Advertised</div><div class="ocn">5</div></div><div id="s5"></div></div><div class="oc"><div class="och pur"><div class="oct">&#8987; Not Adv — Not Arrived</div><div class="ocn">3</div></div><div id="s6"></div></div></div><div class="sh" style="margin-top:14px"><div class="sl">MOT Alerts</div><div class="sr"></div></div><div class="g2"><div class="oc"><div class="och red"><div class="oct">&#128683; MOT Missed</div><div class="ocn">1</div></div><div id="mot-missed"></div></div><div class="oc"><div class="och amb"><div class="oct">&#9888; MOT Due Soon</div><div class="ocn">3</div></div><div id="mot-soon"></div></div></div><div class="sh" style="margin-top:14px"><div class="sl">Under Deposit</div><div class="sr"></div></div><div class="oc"><div class="och tea"><div class="oct">&#128176; Sold — Under Deposit</div><div class="ocn">6</div></div><div id="s-dep" class="vlist-grid"></div></div><div class="sh" style="margin-top:14px"><div class="sl">Fully Live — Advertised &amp; Pictures Taken</div><div class="sr"></div></div><div class="oc"><div class="och grn"><div class="oct">&#10003; Live on All Platforms</div><div class="ocn">7</div></div><div id="s0" class="vlist-grid"></div></div></div><div class="ov" id="ov" onclick="closePanel()"></div><div class="pn" id="pn"><div class="pn-handle"></div><div class="pnh"><div style="min-width:0;flex:1"><div class="pnt" id="pnT"></div><div class="pns" id="pnS"></div></div><div class="pnc" onclick="closePanel()">&#10005;</div></div><div class="pnb" id="pnB"></div></div>
 <script>
-const VER='20260330';
-const ALL_LIVE=[{"reg": "RX72YSD", "make": "Porsche", "model": "Turbo", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 362, "tier": "critical", "year": 2022, "mileage": 10000, "mot": "", "deposit": false}, {"reg": "KF56 UBC", "make": "Ford", "model": "Galaxy", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 202, "tier": "critical", "year": 2006, "mileage": null, "mot": "MISSED", "deposit": false}, {"reg": "BN73 UEH", "make": "Volvo", "model": "Xc40", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 132, "tier": "critical", "year": 2023, "mileage": 6632, "mot": "", "deposit": false}, {"reg": "LG23 VXM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 82, "tier": "slow", "year": 2023, "mileage": 28000, "mot": "", "deposit": false}, {"reg": "LJ73 CPG", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 77, "tier": "slow", "year": 2023, "mileage": 6000, "mot": "", "deposit": false}, {"reg": "GN75 UTZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 76, "tier": "slow", "year": 2025, "mileage": 3000, "mot": "", "deposit": false}, {"reg": "LD25 BKZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 63, "tier": "slow", "year": 2025, "mileage": 9000, "mot": "", "deposit": false}, {"reg": "MT73 HGO", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 53, "tier": "ageing", "year": 2023, "mileage": 6294, "mot": "", "deposit": false}, {"reg": "LF72 WKN", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 49, "tier": "ageing", "year": 2022, "mileage": 12000, "mot": "SOON", "deposit": false}, {"reg": "SD73 XUA", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 41, "tier": "ageing", "year": 2023, "mileage": 12000, "mot": "", "deposit": false}, {"reg": "MA25 JBX", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 38, "tier": "ageing", "year": 2025, "mileage": 11000, "mot": "", "deposit": false}, {"reg": "BC73 KHP", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 25, "tier": "fresh", "year": 2024, "mileage": 11000, "mot": "", "deposit": false}, {"reg": "YC74 VHR", "make": "Volvo", "model": "Twin Ultra", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 17, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "deposit": false}, {"reg": "GMZ 7875", "make": "Audi", "model": "S Line", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 17, "tier": "fresh", "year": null, "mileage": null, "mot": "", "deposit": false}, {"reg": "AMZ 7922", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 17, "tier": "fresh", "year": null, "mileage": null, "mot": "", "deposit": false}, {"reg": "LF23 VTD", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 14, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "deposit": false}, {"reg": "LB73 JBB", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 13, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "deposit": false}, {"reg": "WN24 FVJ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 13, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "deposit": false}, {"reg": "NJ24 UON", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 12, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "deposit": false}, {"reg": "SA74 MDK", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 10, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "deposit": false}, {"reg": "MV25 NZS", "make": "Audi", "model": "S Line", "adv": "Advertised", "prep": "READY", "status": "NOT ARRIVED", "pics": false, "age": 10, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "deposit": false}, {"reg": "LD25 BKU", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 7, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "deposit": false}, {"reg": "LD73 JBT", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 6, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "deposit": false}, {"reg": "SG72 VBM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 6, "tier": "fresh", "year": 2022, "mileage": null, "mot": "SOON", "deposit": false}, {"reg": "AV75 JMO", "make": "Omoda", "model": "5 E Noble", "adv": "Advertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 5, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "deposit": false}, {"reg": "LF24 JHB", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 5, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "deposit": false}, {"reg": "WP73 XBJ", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 5, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "deposit": false}, {"reg": "BW73 KHM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 4, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "deposit": false}, {"reg": "WU24 EBN", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 4, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "deposit": false}, {"reg": "YH70 ZDO", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 2, "tier": "fresh", "year": 2020, "mileage": null, "mot": "", "deposit": false}];
-const S0=[{"reg": "RX72YSD", "make": "Porsche", "model": "Turbo", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 362, "tier": "critical", "year": 2022, "mileage": 10000, "mot": "", "deposit": false}, {"reg": "LJ73 CPG", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 77, "tier": "slow", "year": 2023, "mileage": 6000, "mot": "", "deposit": false}, {"reg": "GN75 UTZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 76, "tier": "slow", "year": 2025, "mileage": 3000, "mot": "", "deposit": false}, {"reg": "LD25 BKZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 63, "tier": "slow", "year": 2025, "mileage": 9000, "mot": "", "deposit": false}, {"reg": "MT73 HGO", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 53, "tier": "ageing", "year": 2023, "mileage": 6294, "mot": "", "deposit": false}, {"reg": "SD73 XUA", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 41, "tier": "ageing", "year": 2023, "mileage": 12000, "mot": "", "deposit": false}, {"reg": "WN24 FVJ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 13, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "deposit": false}];
-const S1_TOP5=[{"reg": "LD25 BKU", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 7, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "deposit": false}, {"reg": "YC74 VHR", "make": "Volvo", "model": "Twin Ultra", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 17, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "deposit": false}, {"reg": "NJ24 UON", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 12, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "deposit": false}, {"reg": "SA74 MDK", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 10, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "deposit": false}, {"reg": "LF24 JHB", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 5, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "deposit": false}];
-const S1_REST=[{"reg": "LF23 VTD", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 14, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "deposit": false}, {"reg": "GMZ 7875", "make": "Audi", "model": "S Line", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 17, "tier": "fresh", "year": null, "mileage": null, "mot": "", "deposit": false}];
+const VER='20260331';
+const ALL_LIVE=[{"reg": "RX72YSD", "make": "Porsche", "model": "Turbo", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 363, "tier": "critical", "year": 2022, "mileage": 10000, "mot": "", "mot_date": "29 Dec 2026", "deposit": false}, {"reg": "KF56 UBC", "make": "Ford", "model": "Galaxy", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 203, "tier": "critical", "year": 2006, "mileage": null, "mot": "MISSED", "mot_date": "10 Dec 2025", "deposit": false}, {"reg": "BN73 UEH", "make": "Volvo", "model": "Xc40", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 133, "tier": "critical", "year": 2023, "mileage": 6632, "mot": "", "mot_date": "", "deposit": false}, {"reg": "LG23 VXM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 83, "tier": "slow", "year": 2023, "mileage": 28000, "mot": "", "mot_date": "8 Mar 2027", "deposit": false}, {"reg": "LJ73 CPG", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 78, "tier": "slow", "year": 2023, "mileage": 6000, "mot": "", "mot_date": "", "deposit": false}, {"reg": "GN75 UTZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 77, "tier": "slow", "year": 2025, "mileage": 3000, "mot": "", "mot_date": "", "deposit": false}, {"reg": "LD25 BKZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 64, "tier": "slow", "year": 2025, "mileage": 9000, "mot": "", "mot_date": "", "deposit": false}, {"reg": "MT73 HGO", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 54, "tier": "ageing", "year": 2023, "mileage": 6294, "mot": "", "mot_date": "11 Oct 2026", "deposit": false}, {"reg": "LF72 WKN", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 50, "tier": "ageing", "year": 2022, "mileage": 12000, "mot": "SOON", "mot_date": "26 Jun 2026", "deposit": false}, {"reg": "SD73 XUA", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 42, "tier": "ageing", "year": 2023, "mileage": 12000, "mot": "", "mot_date": "", "deposit": false}, {"reg": "MA25 JBX", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 39, "tier": "ageing", "year": 2025, "mileage": 11000, "mot": "", "mot_date": "", "deposit": false}, {"reg": "YC74 VHR", "make": "Volvo", "model": "Twin Ultra", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 18, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "GMZ 7875", "make": "Audi", "model": "S Line", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 18, "tier": "fresh", "year": null, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "AMZ 7922", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 18, "tier": "fresh", "year": null, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "LF23 VTD", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 15, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "16 Jan 2027", "deposit": false}, {"reg": "LB73 JBB", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 14, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "WN24 FVJ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 14, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "NJ24 UON", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 13, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "SA74 MDK", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 11, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "MV25 NZS", "make": "Audi", "model": "S Line", "adv": "Advertised", "prep": "READY", "status": "NOT ARRIVED", "pics": false, "age": 11, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "LD25 BKU", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 8, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "LD73 JBT", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 7, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "SG72 VBM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 7, "tier": "fresh", "year": 2022, "mileage": null, "mot": "SOON", "mot_date": "8 Aug 2026", "deposit": false}, {"reg": "AV75 JMO", "make": "Omoda", "model": "5 E Noble", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 6, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "WP73 XBJ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 6, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "BW73 KHM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 5, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "WU24 EBN", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 5, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "YH70 ZDO", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 3, "tier": "fresh", "year": 2020, "mileage": null, "mot": "", "mot_date": "2 Nov 2026", "deposit": false}, {"reg": "BK23 GNY", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "NOT ARRIVED", "pics": false, "age": 1, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "14 Mar 2027", "deposit": false}, {"reg": "NJ24 UTX", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 1, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "CMZ 6782", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "READY", "status": "NOT ARRIVED", "pics": false, "age": 1, "tier": "fresh", "year": null, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "LD23 UTS", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "NOT ARRIVED", "pics": false, "age": 1, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "7 Mar 2027", "deposit": false}];
+const S0=[{"reg": "RX72YSD", "make": "Porsche", "model": "Turbo", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 363, "tier": "critical", "year": 2022, "mileage": 10000, "mot": "", "mot_date": "29 Dec 2026", "deposit": false}, {"reg": "LJ73 CPG", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 78, "tier": "slow", "year": 2023, "mileage": 6000, "mot": "", "mot_date": "", "deposit": false}, {"reg": "GN75 UTZ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 77, "tier": "slow", "year": 2025, "mileage": 3000, "mot": "", "mot_date": "", "deposit": false}, {"reg": "LD25 BKZ", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 64, "tier": "slow", "year": 2025, "mileage": 9000, "mot": "", "mot_date": "", "deposit": false}, {"reg": "MT73 HGO", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 54, "tier": "ageing", "year": 2023, "mileage": 6294, "mot": "", "mot_date": "11 Oct 2026", "deposit": false}, {"reg": "SD73 XUA", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 42, "tier": "ageing", "year": 2023, "mileage": 12000, "mot": "", "mot_date": "", "deposit": false}, {"reg": "WN24 FVJ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 14, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "mot_date": "", "deposit": false}];
+const S1_TOP5=[{"reg": "LD25 BKU", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 8, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "YC74 VHR", "make": "Volvo", "model": "Twin Ultra", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 18, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "NJ24 UON", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 13, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "SA74 MDK", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 11, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "LF23 VTD", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 15, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "16 Jan 2027", "deposit": false}];
+const S1_REST=[{"reg": "GMZ 7875", "make": "Audi", "model": "S Line", "adv": "Advertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 18, "tier": "fresh", "year": null, "mileage": null, "mot": "", "mot_date": "", "deposit": false}];
 const S1_ALL=[...S1_TOP5,...S1_REST];
-const S2=[{"reg": "BC73 KHP", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 25, "tier": "fresh", "year": 2024, "mileage": 11000, "mot": "", "deposit": false}];
-const S3=[{"reg": "MV25 NZS", "make": "Audi", "model": "S Line", "adv": "Advertised", "prep": "READY", "status": "NOT ARRIVED", "pics": false, "age": 10, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "deposit": false}, {"reg": "LD73 JBT", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 6, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "deposit": false}, {"reg": "AV75 JMO", "make": "Omoda", "model": "5 E Noble", "adv": "Advertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 5, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "deposit": false}, {"reg": "WU24 EBN", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 4, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "deposit": false}];
-const S4=[{"reg": "KF56 UBC", "make": "Ford", "model": "Galaxy", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 202, "tier": "critical", "year": 2006, "mileage": null, "mot": "MISSED", "deposit": false}, {"reg": "LF72 WKN", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 49, "tier": "ageing", "year": 2022, "mileage": 12000, "mot": "SOON", "deposit": false}, {"reg": "YH70 ZDO", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 2, "tier": "fresh", "year": 2020, "mileage": null, "mot": "", "deposit": false}];
-const S5=[{"reg": "BN73 UEH", "make": "Volvo", "model": "Xc40", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 132, "tier": "critical", "year": 2023, "mileage": 6632, "mot": "", "deposit": false}, {"reg": "LG23 VXM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 82, "tier": "slow", "year": 2023, "mileage": 28000, "mot": "", "deposit": false}, {"reg": "MA25 JBX", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 38, "tier": "ageing", "year": 2025, "mileage": 11000, "mot": "", "deposit": false}, {"reg": "AMZ 7922", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 17, "tier": "fresh", "year": null, "mileage": null, "mot": "", "deposit": false}, {"reg": "LB73 JBB", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 13, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "deposit": false}, {"reg": "BW73 KHM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 4, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "deposit": false}];
-const S6=[{"reg": "SG72 VBM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 6, "tier": "fresh", "year": 2022, "mileage": null, "mot": "SOON", "deposit": false}, {"reg": "WP73 XBJ", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 5, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "deposit": false}];
-const S_DEP=[{"reg": "AF72 TJZ", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 138, "tier": "critical", "year": 2022, "mileage": 13000, "mot": "", "deposit": true}, {"reg": "LF73 WKZ", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 75, "tier": "slow", "year": 2023, "mileage": 14000, "mot": "", "deposit": true}, {"reg": "WR74 MGU", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 56, "tier": "ageing", "year": 2024, "mileage": 14500, "mot": "", "deposit": true}, {"reg": "MC73 GHD", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 53, "tier": "ageing", "year": 2024, "mileage": 19000, "mot": "", "deposit": true}, {"reg": "MH73 WNP", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 38, "tier": "ageing", "year": 2024, "mileage": 28000, "mot": "", "deposit": true}, {"reg": "LG24 XGH", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 33, "tier": "ageing", "year": 2024, "mileage": 14900, "mot": "", "deposit": true}, {"reg": "RE20 MEV", "make": "Kia", "model": "Niro", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 26, "tier": "fresh", "year": 2020, "mileage": 35000, "mot": "", "deposit": true}, {"reg": "AJ23 UWP", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 17, "tier": "fresh", "year": 2023, "mileage": null, "mot": "SOON", "deposit": true}];
-const S_MOT_MISSED=[{"reg": "KF56 UBC", "make": "Ford", "model": "Galaxy", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 202, "tier": "critical", "year": 2006, "mileage": null, "mot": "MISSED", "deposit": false}];
-const S_MOT_SOON=[{"reg": "LF72 WKN", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 49, "tier": "ageing", "year": 2022, "mileage": 12000, "mot": "SOON", "deposit": false}, {"reg": "AJ23 UWP", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 17, "tier": "fresh", "year": 2023, "mileage": null, "mot": "SOON", "deposit": true}, {"reg": "SG72 VBM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 6, "tier": "fresh", "year": 2022, "mileage": null, "mot": "SOON", "deposit": false}];
+const S2=[{"reg": "AMZ 7922", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 18, "tier": "fresh", "year": null, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "LD73 JBT", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 7, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "AV75 JMO", "make": "Omoda", "model": "5 E Noble", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 6, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "WP73 XBJ", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 6, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "", "deposit": false}];
+const S3=[{"reg": "MV25 NZS", "make": "Audi", "model": "S Line", "adv": "Advertised", "prep": "READY", "status": "NOT ARRIVED", "pics": false, "age": 11, "tier": "fresh", "year": 2025, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "WU24 EBN", "make": "Tesla", "model": "Y Rwd", "adv": "Advertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 5, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "BK23 GNY", "make": "Tesla", "model": "Y Long Range", "adv": "Advertised", "prep": "READY", "status": "NOT ARRIVED", "pics": false, "age": 1, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "14 Mar 2027", "deposit": false}, {"reg": "LD23 UTS", "make": "Tesla", "model": "3 Long Range", "adv": "Advertised", "prep": "READY", "status": "NOT ARRIVED", "pics": false, "age": 1, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "7 Mar 2027", "deposit": false}];
+const S4=[{"reg": "KF56 UBC", "make": "Ford", "model": "Galaxy", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 203, "tier": "critical", "year": 2006, "mileage": null, "mot": "MISSED", "mot_date": "10 Dec 2025", "deposit": false}, {"reg": "LF72 WKN", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 50, "tier": "ageing", "year": 2022, "mileage": 12000, "mot": "SOON", "mot_date": "26 Jun 2026", "deposit": false}, {"reg": "YH70 ZDO", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 3, "tier": "fresh", "year": 2020, "mileage": null, "mot": "", "mot_date": "2 Nov 2026", "deposit": false}];
+const S5=[{"reg": "BN73 UEH", "make": "Volvo", "model": "Xc40", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 133, "tier": "critical", "year": 2023, "mileage": 6632, "mot": "", "mot_date": "", "deposit": false}, {"reg": "LG23 VXM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 83, "tier": "slow", "year": 2023, "mileage": 28000, "mot": "", "mot_date": "8 Mar 2027", "deposit": false}, {"reg": "MA25 JBX", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 39, "tier": "ageing", "year": 2025, "mileage": 11000, "mot": "", "mot_date": "", "deposit": false}, {"reg": "LB73 JBB", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 14, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "BW73 KHM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 5, "tier": "fresh", "year": 2023, "mileage": null, "mot": "", "mot_date": "", "deposit": false}];
+const S6=[{"reg": "SG72 VBM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 7, "tier": "fresh", "year": 2022, "mileage": null, "mot": "SOON", "mot_date": "8 Aug 2026", "deposit": false}, {"reg": "NJ24 UTX", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 1, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "mot_date": "", "deposit": false}, {"reg": "CMZ 6782", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "READY", "status": "NOT ARRIVED", "pics": false, "age": 1, "tier": "fresh", "year": null, "mileage": null, "mot": "", "mot_date": "", "deposit": false}];
+const S_DEP=[{"reg": "AF72 TJZ", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 139, "tier": "critical", "year": 2022, "mileage": 13000, "mot": "", "mot_date": "7 Oct 2026", "deposit": true}, {"reg": "LF73 WKZ", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 76, "tier": "slow", "year": 2023, "mileage": 14000, "mot": "", "mot_date": "18 Sep 2026", "deposit": true}, {"reg": "MC73 GHD", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 54, "tier": "ageing", "year": 2024, "mileage": 19000, "mot": "", "mot_date": "", "deposit": true}, {"reg": "BC73 KHP", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "ARRIVED", "pics": false, "age": 26, "tier": "fresh", "year": 2024, "mileage": 11000, "mot": "", "mot_date": "22 Feb 2027", "deposit": true}, {"reg": "AJ23 UWP", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 18, "tier": "fresh", "year": 2023, "mileage": null, "mot": "SOON", "mot_date": "29 Jun 2026", "deposit": true}, {"reg": "LF24 JHB", "make": "Tesla", "model": "Y Rwd", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 6, "tier": "fresh", "year": 2024, "mileage": null, "mot": "", "mot_date": "", "deposit": true}];
+const S_MOT_MISSED=[{"reg": "KF56 UBC", "make": "Ford", "model": "Galaxy", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": true, "age": 203, "tier": "critical", "year": 2006, "mileage": null, "mot": "MISSED", "mot_date": "10 Dec 2025", "deposit": false}];
+const S_MOT_SOON=[{"reg": "LF72 WKN", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 50, "tier": "ageing", "year": 2022, "mileage": 12000, "mot": "SOON", "mot_date": "26 Jun 2026", "deposit": false}, {"reg": "AJ23 UWP", "make": "Tesla", "model": "3 Long Range", "adv": "UnAdvertised", "prep": "READY", "status": "ARRIVED", "pics": false, "age": 18, "tier": "fresh", "year": 2023, "mileage": null, "mot": "SOON", "mot_date": "29 Jun 2026", "deposit": true}, {"reg": "SG72 VBM", "make": "Tesla", "model": "Y Long Range", "adv": "UnAdvertised", "prep": "NEED REPAIR", "status": "NOT ARRIVED", "pics": false, "age": 7, "tier": "fresh", "year": 2022, "mileage": null, "mot": "SOON", "mot_date": "8 Aug 2026", "deposit": false}];
 
-/* ── PWA: Service Worker registration ── */
 if ('serviceWorker' in navigator) {
   const swBlob = new Blob([`
-const CACHE = 'icknox-v20260330';
+const CACHE = 'icknox-v20260331';
 const URLS  = [self.location.href || '/'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(URLS)).then(() => self.skipWaiting()));
@@ -328,7 +324,6 @@ self.addEventListener('fetch', e => {
   }).catch(() => {});
 }
 
-/* ── PWA: Install prompt ── */
 let deferredPrompt = null;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
@@ -347,8 +342,12 @@ function dismissInstall() {
   try { localStorage.setItem('ib-dismissed','1'); } catch(e){}
 }
 
-/* ── Auto-refresh: check for new version every 5 minutes ── */
+let _isPrinting = false;
+window.addEventListener('beforeprint', () => { _isPrinting = true; });
+window.addEventListener('afterprint',  () => { _isPrinting = false; });
+
 function checkForUpdate() {
+  if (_isPrinting) return;
   fetch(location.href + '?nocache=' + Date.now(), {cache:'no-store'})
     .then(r => r.text())
     .then(html => {
@@ -359,9 +358,10 @@ function checkForUpdate() {
       }
     }).catch(() => {});
 }
-setInterval(checkForUpdate, 5 * 60 * 1000); // every 5 min
+setInterval(checkForUpdate, 5 * 60 * 1000);
 
 function showToast(msg) {
+  if (_isPrinting) return;
   const t = document.getElementById('update-toast');
   if (!t) return;
   t.textContent = msg;
@@ -369,7 +369,6 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 4000);
 }
 
-/* ── Dashboard logic ── */
 const TIERS = {fresh:'Fresh', ageing:'Ageing', slow:'Slow', critical:'Critical'};
 const motData = {};
 
@@ -398,8 +397,8 @@ function vrow(v, opts) {
   opts = opts || {};
   const t    = tier(v.age);
   const meta = v.mileage ? v.mileage.toLocaleString()+'mi' : '\u2014';
-  const motB = v.mot==='MISSED' ? '<span class="badge b-missed">MOT</span>'
-             : v.mot==='SOON'   ? '<span class="badge b-soon">MOT Soon</span>' : '';
+  const motB = v.mot==='MISSED' ? '<span class="badge b-missed">MOT MISSED</span>'
+             : v.mot==='SOON'   ? '<span class="badge b-soon">MOT SOON</span>' : '';
   const depB = v.deposit ? '<span class="badge b-dep">Dep</span>' : '';
   const numB = opts.num != null ? '<div class="b-num">'+opts.num+'</div>' : '';
   const cls  = opts.priority ? 'vr priority' : opts.deposit ? 'vr dep-highlight' : 'vr';
@@ -423,9 +422,36 @@ function openDetail(v) {
   const sl = v.status==='ARRIVED' ? 'Arrived' : 'Not Arrived';
   const xc = v.pics ? 'pics' : 'nopics';
   const xl = v.pics ? 'Pictures Taken' : 'No Pictures';
-  const mt = v.mot==='MISSED' ? '<span class="dtag motbad">MOT Missed</span>'
-           : v.mot==='SOON'   ? '<span class="dtag motsoon">MOT Due Soon</span>' : '';
   const dep = v.deposit ? '<span class="dtag dep">Under Deposit</span>' : '';
+
+  // ── MOT section in detail panel ──────────────────────────────────────────
+  let motDetailHtml = '';
+  if (v.mot || v.mot_date) {
+    let boxCls = 'mot-detail-box';
+    let statusLabel = '';
+    let motTagCls = '';
+    if (v.mot === 'MISSED') {
+      boxCls += ' missed'; statusLabel = 'MOT MISSED'; motTagCls = 'motbad';
+    } else if (v.mot === 'SOON') {
+      boxCls += ' soon'; statusLabel = 'MOT DUE SOON'; motTagCls = 'motsoon';
+    } else {
+      boxCls += ' ok'; statusLabel = 'MOT OK'; motTagCls = 'motok';
+    }
+    const dateDisplay = v.mot_date || '\u2014';
+    motDetailHtml = '<div class="'+boxCls+'">'
+      + '<div class="mot-detail-label">MOT Expiry</div>'
+      + '<div class="mot-detail-date">'+dateDisplay+'</div>'
+      + '<div class="mot-detail-status">'+statusLabel+'</div>'
+      + '</div>';
+  } else {
+    motDetailHtml = '<div class="di"><div class="dil">MOT</div><div class="dv" style="color:var(--text3)">\u2014 No date</div></div>';
+  }
+
+  // ── MOT tag for top badge strip ───────────────────────────────────────────
+  const mt = v.mot==='MISSED' ? '<span class="dtag motbad">MOT Missed'+(v.mot_date?' \u2014 '+v.mot_date:'')+'</span>'
+           : v.mot==='SOON'   ? '<span class="dtag motsoon">MOT Due Soon'+(v.mot_date?' \u2014 '+v.mot_date:'')+'</span>'
+           : (v.mot_date      ? '<span class="dtag motok">MOT \u2014 '+v.mot_date+'</span>' : '');
+
   document.getElementById('pnT').textContent = v.reg;
   document.getElementById('pnS').textContent = v.make+' '+v.model;
   document.getElementById('pnB').innerHTML =
@@ -443,24 +469,39 @@ function openDetail(v) {
       +'<div class="di"><div class="dil">Reg Year</div><div class="dv">'+(yr||'\u2014')+'</div></div>'
       +'<div class="di"><div class="dil">Year</div><div class="dv">'+(v.year||'\u2014')+'</div></div>'
       +'<div class="di"><div class="dil">Mileage</div><div class="dv">'+(v.mileage?v.mileage.toLocaleString()+' mi':'\u2014')+'</div></div>'
+    +'</div></div>'
+    +'<div class="ds"><div class="dl">MOT Information</div><div class="dg">'
+      + motDetailHtml
     +'</div></div>';
   openP();
 }
 
+// ── MOT ALERT ROWS — now show the actual expiry date prominently ─────────────
 function motRow(v, type) {
   const d    = getMot(v.reg);
   const bCls = type==='missed' ? 'mot-missed-badge' : 'mot-soon-badge';
-  const lbl  = type==='missed' ? 'MISSED' : 'SOON';
+  const dCls = type==='missed' ? 'mot-missed-date'  : 'mot-soon-date';
+  const lbl  = type==='missed' ? 'MISSED' : 'DUE SOON';
   const enc  = encodeURIComponent(JSON.stringify(v));
   const btns = ['Pending','Booked','Done'].map(s => {
     const a = d.status===s ? 'active '+s.toLowerCase() : '';
     return '<button class="msb '+a+'" data-reg="'+v.reg+'" data-status="'+s
           +'" onclick="event.stopPropagation();setMotStatusBtn(this)">'+s+'</button>';
   }).join('');
+
+  // Date display: show the actual expiry date large, with the status label small above it
+  const dateHtml = v.mot_date
+    ? '<div class="mot-date-col">'
+        + '<span class="mot-status-badge '+bCls+'">'+lbl+'</span>'
+        + '<span class="mot-expiry-date '+dCls+'">'+v.mot_date+'</span>'
+      + '</div>'
+    : '<div class="mot-date-col"><span class="mot-status-badge '+bCls+'">'+lbl+'</span><span style="font-size:10px;color:var(--text3)">No date</span></div>';
+
   return '<div class="mot-row">'
-    +'<div style="flex-shrink:0;min-width:60px"><span class="mot-date-badge '+bCls+'">'+lbl+'</span></div>'
+    + dateHtml
     +'<div class="vi">'
       +'<div class="vn" style="cursor:pointer" data-v="'+enc+'" onclick="openDetailEl(this)">'+v.reg+' \u2014 '+v.make+' '+v.model+'</div>'
+      +'<div class="vm">'+tier(v.age).charAt(0).toUpperCase()+tier(v.age).slice(1)+' stock \u00b7 '+v.age+'d in stock'+(v.adv==='Advertised'?' \u00b7 Advertised':' \u00b7 UnAdvertised')+'</div>'
       +'<div class="mot-comment" onclick="event.stopPropagation()">'
         +'<input type="text" placeholder="Add note\u2026" data-reg="'+v.reg+'" value="'+d.note+'"'
         +' oninput="setMot(this.dataset.reg,\'note\',this.value)">'
@@ -504,7 +545,6 @@ function openP()    { document.getElementById('ov').classList.add('open'); docum
 function closePanel(){ document.getElementById('ov').classList.remove('open'); document.getElementById('pn').classList.remove('open'); }
 document.addEventListener('keydown', e => { if (e.key==='Escape') closePanel(); });
 
-/* ── Render all sections ── */
 renderList('s0', S0);
 (function(){
   const e5 = document.getElementById('s1-top5');
